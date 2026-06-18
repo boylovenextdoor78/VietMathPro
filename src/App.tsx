@@ -3046,60 +3046,299 @@ function Mode9() {
   );
 }
 
+function getPrimesUpTo(limit: number): number[] {
+  if (limit < 2) return [];
+  const sieve = new Uint8Array(limit + 1);
+  const primes: number[] = [];
+  for (let i = 2; i <= limit; i++) {
+    if (sieve[i] === 0) {
+      primes.push(i);
+      for (let j = i * 2; j <= limit; j += i) {
+        sieve[j] = 1;
+      }
+    }
+  }
+  return primes;
+}
+
+const primeCache: number[] = [2];
+function getKthPrime(k: number): number {
+  if (k <= 0) return 2;
+  if (k <= primeCache.length) {
+    return primeCache[k - 1];
+  }
+  let candidate = primeCache[primeCache.length - 1];
+  while (primeCache.length < k) {
+    candidate += (candidate === 2 ? 1 : 2);
+    let isP = true;
+    const limit = Math.sqrt(candidate);
+    for (let i = 0; i < primeCache.length; i++) {
+      const p = primeCache[i];
+      if (p > limit) break;
+      if (candidate % p === 0) {
+        isP = false;
+        break;
+      }
+    }
+    if (isP) {
+      primeCache.push(candidate);
+    }
+  }
+  return primeCache[k - 1];
+}
+
+interface PrimeQuery {
+  id: string;
+  ordinal: number;
+}
+
 function Mode10() {
   const [n, setN] = useState('');
   const [m, setM] = useState('1');
   const [result, setResult] = useState<any>(null);
+  const [errorMess, setErrorMess] = useState<string>('');
+  const [primeQueries, setPrimeQueries] = useState<PrimeQuery[]>([
+    { id: '1', ordinal: 1 }
+  ]);
+
+  const addQueryRow = () => {
+    const lastOrdinal = primeQueries.length > 0 ? primeQueries[primeQueries.length - 1].ordinal : 0;
+    const nextOrdinal = lastOrdinal + 1;
+    setPrimeQueries([
+      ...primeQueries,
+      { id: String(Date.now() + Math.random()), ordinal: nextOrdinal }
+    ]);
+  };
+
+  const updateQueryOrdinal = (id: string, value: number) => {
+    setPrimeQueries(prev => prev.map(q => {
+      if (q.id === id) {
+        return { ...q, ordinal: value };
+      }
+      return q;
+    }));
+  };
+
+  const removeQueryRow = (id: string) => {
+    setPrimeQueries(prev => prev.filter(q => q.id !== id));
+  };
 
   const calculate = () => {
+    setErrorMess('');
     const num = parseInt(n);
     const step = parseInt(m);
-    const primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47]; // Small primes for demo
-    const table = primes.filter(p => p <= num).map(p => ({
-      p,
-      v: v_p_multifactorial(num, step, p)
-    })).filter(item => item.v > 0);
-    setResult(table);
+
+    if (isNaN(num) || num < 2) {
+      setErrorMess('Vui lòng nhập số nguyên N ≥ 2. / Please enter an integer N ≥ 2.');
+      setResult(null);
+      return;
+    }
+    if (isNaN(step) || step < 1) {
+      setErrorMess('Vui lòng nhập bước nhảy m ≥ 1. / Please enter step m ≥ 1.');
+      setResult(null);
+      return;
+    }
+    if (step === 1 && num > 9999) {
+      setErrorMess('Ứng dụng chỉ hỗ trợ N lên tới 9999 khi m = 1 để tránh quá tải trình duyệt. / N is limited to 9999 when m = 1 to prevent browser slowdown.');
+      setResult(null);
+      return;
+    }
+    if (step > 1 && num > 100000) {
+      setErrorMess('Khi m > 1, ứng dụng giới hạn N tối đa là 100,000 để bảo vệ tài nguyện hệ thống. / N is limited to 100,000 when m > 1 to protect browser resources.');
+      setResult(null);
+      return;
+    }
+
+    try {
+      const primes = getPrimesUpTo(num);
+      const table = primes.map(p => ({
+        p,
+        v: v_p_multifactorial(num, step, p)
+      })).filter(item => item.v > 0);
+      setResult(table);
+    } catch (e) {
+      console.error(e);
+      setErrorMess('Đã xảy ra lỗi trong quá trình tính toán. / An error occurred during calculation.');
+    }
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 animate-in fade-in duration-200">
       <div className="border-b border-[#141414] pb-4">
         <h2 className="font-serif italic text-4xl">Factorial Analysis</h2>
         <p className="font-mono text-xs opacity-50 mt-2">Exponent of prime P in N! or N!⁽ᵐ⁾</p>
       </div>
+
+      <div className="bg-amber-50 border-l-4 border-amber-500 p-4 font-sans text-xs text-amber-900 space-y-1">
+        <p className="font-semibold">⚠️ Giới hạn hỗ trợ của hệ thống / System Operating Limits:</p>
+        <ul className="list-disc pl-4 space-y-1">
+          <li><strong>Nếu m = 1:</strong> Hệ thống chỉ hỗ trợ <strong>N ≤ 9999</strong> để tối ưu hóa hiệu năng tính toán.</li>
+          <li><strong>Nếu m &gt; 1:</strong> N có thể hoạt động xa hơn nhiều so với 9999, tối đa lên tới <strong>100,000</strong>.</li>
+        </ul>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
           <label className="font-mono text-[10px] uppercase opacity-50">N</label>
-          <input type="number" value={n} onChange={e => setN(e.target.value)} className="w-full p-3 border border-[#141414] font-mono" />
+          <input
+            type="number"
+            value={n}
+            onChange={e => setN(e.target.value)}
+            className="w-full p-3 border border-[#141414] font-mono focus:outline-none focus:ring-1 focus:ring-black"
+            placeholder="Ví dụ: 100"
+          />
         </div>
         <div className="space-y-2">
           <label className="font-mono text-[10px] uppercase opacity-50">Step (m)</label>
-          <input type="number" value={m} onChange={e => setM(e.target.value)} className="w-full p-3 border border-[#141414] font-mono" />
+          <input
+            type="number"
+            value={m}
+            onChange={e => setM(e.target.value)}
+            className="w-full p-3 border border-[#141414] font-mono focus:outline-none focus:ring-1 focus:ring-black"
+            placeholder="Mặc định m = 1 (Factorial)"
+          />
         </div>
       </div>
-      <button onClick={calculate} className="w-full py-4 bg-[#141414] text-[#E4E3E0] font-mono uppercase">Analyze Factorial</button>
-      {result && (
-        <div className="bg-[#F5F5F5] border border-[#141414] overflow-hidden">
-          <table className="w-full text-left font-mono text-sm">
-            <thead className="bg-[#141414] text-[#E4E3E0] uppercase text-[10px] tracking-widest">
-              <tr>
-                <th className="p-4">Prime (p)</th>
-                <th className="p-4">Exponent (v_p)</th>
-                <th className="p-4">Contribution</th>
-              </tr>
-            </thead>
-            <tbody>
-              {result.map((item: any, i: number) => (
-                <tr key={i} className="border-b border-[#141414]/10">
-                  <td className="p-4 font-serif italic text-xl">{item.p}</td>
-                  <td className="p-4">{item.v}</td>
-                  <td className="p-4 opacity-50">{item.p}^{item.v}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+
+      <button onClick={calculate} className="w-full py-4 bg-[#141414] text-[#E4E3E0] font-mono uppercase tracking-wider hover:bg-neutral-800 transition-colors">
+        Analyze Factorial
+      </button>
+
+      {/* --- QUICK ORDINAL PRIME EXPONENT LOOKUP --- */}
+      <div className="border-2 border-[#141414] p-5 bg-stone-50 space-y-4">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-[#141414]/10 pb-3 gap-2">
+          <div>
+            <h3 className="font-serif italic text-lg font-bold text-neutral-900 flex items-center gap-1.5">
+              <span>🔍</span> Tra Cứu Số Mũ Theo Thứ Tự SNT
+            </h3>
+            <p className="font-mono text-[10px] opacity-60 uppercase tracking-widest mt-0.5">
+              Prime Index Exponent lookup (Supports any huge N)
+            </p>
+          </div>
+          <button
+            onClick={addQueryRow}
+            className="px-3 py-1.5 bg-emerald-50 text-emerald-800 border-2 border-emerald-800 hover:bg-emerald-100 transition-colors font-mono text-xs font-bold flex items-center gap-1"
+            title="Thêm số thứ tự nguyên tố tiếp theo / Add next prime index"
+          >
+            <span className="text-sm font-black">+</span> SNT tiếp theo
+          </button>
         </div>
+
+        <div className="space-y-2.5 max-h-[350px] overflow-y-auto custom-scrollbar pr-1">
+          {primeQueries.map((q, index) => {
+            const p = getKthPrime(q.ordinal);
+            const numVal = parseInt(n);
+            const stepVal = parseInt(m) || 1;
+            let exponentValue = 0;
+            const hasValidN = !isNaN(numVal) && numVal >= 2;
+            
+            if (hasValidN && p <= numVal) {
+              exponentValue = v_p_multifactorial(numVal, stepVal, p);
+            }
+
+            return (
+              <div key={q.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-3 border border-[#141414]/20 hover:border-black transition-all">
+                <div className="flex items-center gap-2">
+                  <span className="font-mono text-xs text-neutral-400">Trạng thái #{index + 1}:</span>
+                  <span className="font-serif italic text-xs font-medium">SNT thứ (k =):</span>
+                  <input
+                    type="number"
+                    min="1"
+                    max="1000000"
+                    value={q.ordinal}
+                    onChange={e => {
+                      const val = parseInt(e.target.value) || 1;
+                      updateQueryOrdinal(q.id, Math.max(1, val));
+                    }}
+                    className="w-16 p-1 border border-[#141414] font-mono text-center text-sm focus:outline-none focus:ring-1 focus:ring-black bg-stone-50"
+                  />
+                </div>
+
+                <div className="flex flex-1 flex-wrap sm:flex-nowrap items-center justify-between gap-4">
+                  <div className="flex items-center gap-2 px-2 py-1 bg-amber-50 border border-[#141414]/15 rounded-sm font-mono text-xs">
+                    <span className="text-neutral-500">SNT tương ứng:</span>
+                    <span className="font-serif italic text-sm font-bold text-black font-semibold">p = {p}</span>
+                  </div>
+
+                  <div className="flex items-center gap-3 ml-auto">
+                    <div className="font-mono text-xs text-neutral-600">
+                      Số mũ <span className="font-serif italic text-sm font-semibold">v_p</span> :{" "}
+                      {hasValidN ? (
+                        p > numVal ? (
+                          <span className="text-red-500 font-bold">0 (p &gt; N)</span>
+                        ) : (
+                          <span className="text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 border border-emerald-300 rounded-sm">
+                            {exponentValue}
+                          </span>
+                        )
+                      ) : (
+                        <span className="text-neutral-400 italic">Nhập N để tính / Enter N</span>
+                      )}
+                    </div>
+                    {hasValidN && exponentValue > 0 && (
+                      <span className="font-mono text-[11px] text-neutral-500 bg-neutral-100 px-1.5 py-0.5 rounded border border-neutral-200">
+                        {p}<sup>{exponentValue}</sup>
+                      </span>
+                    )}
+                    {primeQueries.length > 1 && (
+                      <button
+                        onClick={() => removeQueryRow(q.id)}
+                        className="px-2 py-1 text-red-600 hover:bg-red-50 hover:text-red-800 transition-colors border border-transparent hover:border-red-200 text-xs font-mono font-bold"
+                        title="Xóa dòng tra cứu / Remove row"
+                      >
+                        Xóa
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {errorMess && (
+        <div className="p-4 bg-red-50 border border-red-200 text-red-700 text-sm font-sans flex items-start gap-2 rounded-sm">
+          <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+          <span>{errorMess}</span>
+        </div>
+      )}
+
+      {result && result.length > 0 && (
+        <div className="space-y-3">
+          <div className="flex justify-between items-center px-1">
+            <span className="font-mono text-xs text-neutral-500">
+              Tổng số ước nguyên tố / Divisors found: <span className="font-bold text-neutral-800 font-serif italic text-base">{result.length}</span>
+            </span>
+          </div>
+          
+          <div className="bg-[#F5F5F5] border border-[#141414] max-h-[500px] overflow-y-auto custom-scrollbar">
+            <table className="w-full text-left font-mono text-sm relative">
+              <thead className="bg-[#141414] text-[#E4E3E0] uppercase text-[10px] tracking-widest sticky top-0 z-10 shadow-sm">
+                <tr>
+                  <th className="p-4 bg-[#141414]">Prime (p)</th>
+                  <th className="p-4 bg-[#141414]">Exponent (v_p)</th>
+                  <th className="p-4 bg-[#141414]">Contribution</th>
+                </tr>
+              </thead>
+              <tbody>
+                {result.map((item: any, i: number) => (
+                  <tr key={i} className="border-b border-[#141414]/10 hover:bg-white/40 transition-colors">
+                    <td className="p-4 font-serif italic text-xl">{item.p}</td>
+                    <td className="p-4 font-semibold">{item.v}</td>
+                    <td className="p-4 opacity-50 font-sans text-xs">{item.p}<sup>{item.v}</sup></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {result && result.length === 0 && (
+        <p className="text-center font-serif italic py-8 text-neutral-500">
+          Không tìm thấy ước nguyên tố nào với N và m đã nhập.
+        </p>
       )}
     </div>
   );

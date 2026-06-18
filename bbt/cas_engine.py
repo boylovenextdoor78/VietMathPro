@@ -53,6 +53,8 @@ class CASEngine:
         """Checks if a sympy value is completely real and non-imaginary."""
         if val is None:
             return False
+        if val == sp.zoo or val is sp.zoo:
+            return False
         if val in [sp.oo, -sp.oo]:
             return True
         if val is sp.nan:
@@ -73,7 +75,7 @@ class CASEngine:
     @classmethod
     def safe_float(cls, val: Any, default: float = 0.0) -> float:
         """Converts a SymPy expression safely to a float, returning only the real part to prevent complex float errors."""
-        if val is None or val is sp.nan:
+        if val is None or val is sp.nan or val == sp.zoo or val is sp.zoo:
             return default
         if val == sp.oo:
             return float('inf')
@@ -180,7 +182,24 @@ class CASEngine:
                 lim_val = sp.limit(expr_rewritten, x, target, dir=dir_sym)
             else:
                 lim_val = sp.limit(expr_rewritten, x, target)
-            return sp.simplify(lim_val)
+            resolved_val = sp.simplify(lim_val)
+            
+            # Resolve complex infinity (zoo) to +oo or -oo if possible
+            if resolved_val == sp.zoo or resolved_val is sp.zoo:
+                try:
+                    pt_val = cls.safe_float(target)
+                    # probe slightly left/right depending on direction selection
+                    if dir_sym == "-":
+                        probe_pt = pt_val - 1e-7
+                    elif dir_sym == "+":
+                        probe_pt = pt_val + 1e-7
+                    else:
+                        probe_pt = pt_val + 1e-7
+                    val_at_probe = cls.safe_float(expr_rewritten.subs(x, probe_pt).evalf())
+                    return sp.oo if val_at_probe >= 0 else -sp.oo
+                except Exception:
+                    return sp.oo
+            return resolved_val
         except Exception as e:
             # Numerical approximation fallback on limit failure.
             try:

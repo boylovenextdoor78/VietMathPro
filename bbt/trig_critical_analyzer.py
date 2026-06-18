@@ -198,7 +198,7 @@ class TrigCriticalAnalyzer:
             label (str): Beautiful unicode label (e.g. '3√2/d', '7π/6', or a nice decimal).
             exact_val (sp.Expr): The simplified symbolic representation.
         """
-        if val is None or val is sp.nan:
+        if val is None or val is sp.nan or val == sp.zoo or val is sp.zoo:
             return True, "", val
 
         # 1. Check if it's already a clean rational/multiple of pi
@@ -338,6 +338,16 @@ class TrigCriticalAnalyzer:
             # Determine if it's a pole
             fl_xp = float(xp.evalf())
             is_pole = any(abs(float(pole.evalf()) - fl_xp) < 1e-9 for pole in poles_in_interval)
+            
+            # Dynamic pole check: if evaluating f(xp) yields sp.zoo, it is a pole
+            if not is_pole:
+                try:
+                    f_val_test = expr.subs(x, xp)
+                    if f_val_test == sp.zoo or f_val_test is sp.zoo:
+                        is_pole = True
+                except Exception:
+                    pass
+                    
             pt_meta["is_pole"] = is_pole
             
             # Boundaries of table are marked
@@ -842,12 +852,14 @@ class TrigCriticalAnalyzer:
             return "+∞"
         elif val == -sp.oo:
             return "-∞"
+        elif val is sp.nan or val == sp.zoo or val is sp.zoo:
+            return ""
         return cls._render_point_label(val)
 
     @classmethod
     def _render_point_label(cls, val: sp.Expr) -> str:
         """Converts fractions/roots/integers to beautiful unicode textbook math labels."""
-        if val is sp.nan:
+        if val is sp.nan or val == sp.zoo or val is sp.zoo:
             return ""
         if val == sp.oo:
             return "+∞"

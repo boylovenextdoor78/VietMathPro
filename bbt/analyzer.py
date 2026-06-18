@@ -135,6 +135,15 @@ class VariationAnalyzer:
                 is_pole = (xp in poles 
                            or any(abs(CASEngine.safe_float(xp - pole)) < 1e-9 for pole in poles)
                            or not is_point_in_domain(xp, domain_intervals))
+                           
+                # Dynamic pole check: if evaluating f(xp) yields sp.zoo, it is a pole
+                if not is_pole:
+                    try:
+                        f_val_test = expr.subs(CASEngine.get_symbol_x(), xp)
+                        if f_val_test == sp.zoo or f_val_test is sp.zoo:
+                            is_pole = True
+                    except Exception:
+                        pass
                 pt_meta["is_pole"] = is_pole
                 
                 # Check if it's on a domain boundary (e.g. x = -1 for sqrt(x+1))
@@ -487,14 +496,14 @@ class VariationAnalyzer:
             return "+∞"
         elif val == -sp.oo:
             return "-∞"
-        elif val is sp.nan:
+        elif val is sp.nan or val == sp.zoo or val is sp.zoo:
             return ""
         return VariationAnalyzer._render_point_label(val)
 
     @staticmethod
     def _render_point_label(val: sp.Expr) -> str:
         """Converts fractions/roots/integers to nice localized visual labels."""
-        if val is sp.nan:
+        if val is sp.nan or val == sp.zoo or val is sp.zoo:
             return ""
         # Handle simple fractions mathematically
         if isinstance(val, sp.Rational) or val.is_Rational:
