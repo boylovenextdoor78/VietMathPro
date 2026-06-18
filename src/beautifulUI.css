@@ -1,0 +1,249 @@
+/* --- VIETMATH PRO LUXE EDITORIAL STYLING OVERHAUL ---
+   An elegant, high-end Neo-Brutalist & Editorial design system.
+   Combines vintage academic textbook typography with ultra-modern interactive accents.
+*/
+
+/* 1. Root & Base Planner Canvas */
+body {
+  background-color: #E6E5E2 !important;
+  background-image: 
+    radial-gradient(rgba(20, 20, 20, 0.05) 1.5px, transparent 1.5px),
+    radial-gradient(rgba(20, 20, 20, 0.05) 1.5px, transparent 1.5px) !important;
+  background-size: 24px 24px !important;
+  background-position: 0 0, 12px 12px !important;
+  transition: background-color 0.4s ease;
+  overflow-y: scroll;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px !important;
+  height: 8px !important;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(20, 20, 20, 0.03) !important;
+  border-left: 1px solid rgba(20, 20, 20, 0.05) !important;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(20, 20, 20, 0.3) !important;
+  border-radius: 4px !important;
+  border: 2px solid #E6E5E2 !important;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(20, 20, 20, 0.5) !important;
+}
+
+/* 2. High-Fidelity Typography & Rhythm */
+.font-serif {
+  font-family: "Cormorant Garamond", Georgia, serif !important;
+  letter-spacing: -0.02em !important;
+}
+
+.font-mono {
+  font-family: "JetBrains Mono", monospace !important;
+  letter-spacing: -0.01em !important;
+}
+
+h1, h2, h3 {
+  font-weight: 500 !important;
+}
+
+/* 3. Luxury Satin Glass header */
+header {
+  background: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(12px) !important;
+  border-bottom: 2px solid #141414 !important;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03) !important;
+}
+
+/* 4. Elegant Interactive Navigation Grid (MODES Card Transformation) */
+.grid > button.group {
+  position: relative !important;
+  border: 2px solid #141414 !important;
+  border-radius: 8px !important;
+  box-shadow: 4px 4px 0px 0px #141414 !important;
+  background-color: #ffffff !important;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+  overflow: hidden !important;
+}
+
+.grid > button.group:hover {
+  transform: translate(-3px, -3px) !important;
+  box-shadow: 8px 8px 0px 0px #141414 !important;
+  background-color: #fdfdfd !important;
+}
+
+.grid > button.group::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: #141414;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.grid > button.group:hover::before {
+  opacity: 1;
+}
+
+.grid > button.group h3 {
+  transition: transform 0.3s ease, color 0.3s ease !important;
+}
+
+.grid > button.group:hover h3 {
+  transform: translateX(4px) !important;
+  color: #141414 !important;
+}
+
+/* 5. Sleek Form Inputs overlay styling */
+input[type="text"],
+input[type="number"],
+input[type="password"],
+textarea,
+select {
+  border: 1.5px solid #141414 !important;
+  border-radius: 4px !important;
+  background-color: #ffffff !important;
+  color: #141414 !important;
+  box-shadow: 2px 2px 0px 0px #141414 !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="password"]:focus,
+textarea:focus,
+select:focus {
+  transform: translate(-1px, -1px) !important;
+  box-shadow: 4px 4px 0px 0px #141414 !important;
+  border-color: #141414 !important;
+  outline: none !important;
+  background-color: #ffffff !important;
+}
+
+/* 6. High-Contrast Math & CAS Panels */
+.katex-display, .katex {
+  font-family: inherit !important;
+}
+
+/* Customize code container card blocks for pristine CAS presentation */
+.bg-\[\#141414\] {
+  background-color: #141414 !important;
+  border: 2px solid #141414 !important;
+  border-radius: 8px !important;
+  box-shadow: 6px 6px 0px 0px rgba(20, 20, 20, 0.15) !important;
+}
+
+/* Elegant badges transitions */
+.bg-emerald-100 {
+  background-color: #e6fcf5 !important;
+  border: 1.5px solid #0ca678 !important;
+  color: #0ca678 !important;
+  border-radius: 4px !important;
+  font-weight: 500 !important;
+}
+
+.bg-amber-100 {
+  background-color: #fff9db !important;
+  border: 1.5px solid #f59f00 !important;
+  color: #f59f00 !important;
+  border-radius: 4px !important;
+  font-weight: 500 !important;
+}
+
+/* 7. Advanced Interactive Buttons styling overrides */
+button:not(.grid > button) {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Luxury button accent matching neo-brutalist standard */
+button.bg-\[\#141414\]:not(:disabled) {
+  background-color: #141414 !important;
+  color: #E4E3E0 !important;
+  border: 2px solid #141414 !important;
+  border-radius: 4px !important;
+  box-shadow: 3px 3px 0px 0px rgba(255, 255, 255, 0.2) !important;
+}
+
+button.bg-\[\#141414\]:not(:disabled):hover {
+  transform: translate(-2px, -2px) !important;
+  box-shadow: 5px 5px 0px 0px rgba(255, 255, 255, 0.3) !important;
+}
+
+button.bg-\[\#141414\]:not(:disabled):active {
+  transform: translate(1px, 1px) !important;
+  box-shadow: 1px 1px 0px 0px rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Standard transparent/outline buttons */
+button.border-b, button.border {
+  border-radius: 4px !important;
+}
+
+/* 8. Sophisticated Safe Cooldown Panel */
+.fixed.inset-0.bg-black\/60 {
+  backdrop-filter: blur(8px) !important;
+}
+
+.fixed .bg-\[\#E4E3E0\] {
+  border: 3px solid #141414 !important;
+  border-radius: 12px !important;
+  box-shadow: 8px 8px 0px 0px #141414 !important;
+}
+
+/* 9. Visual Polish on Tables */
+table {
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+}
+
+table th {
+  border-bottom: 2px solid #141414 !important;
+  font-weight: 600 !important;
+  background-color: rgba(20, 20, 20, 0.02) !important;
+}
+
+table td {
+  border-bottom: 1px solid rgba(20, 20, 20, 0.08) !important;
+}
+
+table tr:last-child td {
+  border-bottom: none !important;
+}
+
+/* Math Plotly area rounding spacing */
+.js-plotly-plot {
+  border: 1.5px solid #141414 !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  box-shadow: 4px 4px 0px 0px #141414 !important;
+}
+
+/* 10. Delicate Stagger Entry and Fade Transitions */
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.max-w-7xl {
+  animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+/* Accent for specialized titles */
+.font-serif.italic {
+  background: linear-gradient(120deg, #141414 0%, #3a3a3a 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}

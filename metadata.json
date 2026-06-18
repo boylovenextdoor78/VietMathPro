@@ -1,0 +1,8 @@
+{
+  "name": "Remix: Remix: Remix: Remix: Remix: VietMath Pro - Advanced Mathematical Tool for Students in University",
+  "description": "A comprehensive mathematical tool for number theory, algebra, calculus, and probability, inspired by advanced computational scripts.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
