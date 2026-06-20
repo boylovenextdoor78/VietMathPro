@@ -6,7 +6,9 @@ import {
   AlertTriangle,
   Download,
   Flame,
-  CheckCircle2
+  CheckCircle2,
+  Copy,
+  Check
 } from 'lucide-react';
 import { InlineMath } from 'react-katex';
 
@@ -51,6 +53,15 @@ export default function FunctionVariationTableur() {
   const [domainVnm, setDomainVnm] = useState<string | null>(null);
   const [asymptotesReport, setAsymptotesReport] = useState<AsymptotesReport | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  const copyToClipboard = (text: string, id: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedId(id);
+    setTimeout(() => {
+      setCopiedId(null);
+    }, 1500);
+  };
 
   const handleSolve = async (exprToSolve = expression) => {
     setLoading(true);
@@ -430,11 +441,32 @@ export default function FunctionVariationTableur() {
                           
                           <div className="pt-2 border-t border-white/5 flex flex-col space-y-1">
                             <span className="text-[9px] uppercase tracking-wider text-white/30 font-mono">
-                              {item.is_exact ? 'Giá trị chuẩn xác (Exact Symbol):' : 'Giá trị phân tích (25-Digit Precision, 6-Digit Display):'}
+                              {item.is_exact ? 'Giá trị chuẩn xác (Exact Symbol):' : 'Giá trị phân tích (25 chữ số - Nhấp để sao chép):'}
                             </span>
-                            <span className={`text-xs font-mono break-all select-all bg-black/60 p-1.5 rounded-sm border ${!item.is_exact ? 'border-dashed border-amber-500/25 text-amber-200 underline decoration-dashed' : 'border-white/10 text-white/95'}`}>
-                              {item.value}
-                            </span>
+                            <div className="relative group/copy">
+                              <span 
+                                onClick={() => copyToClipboard(item.value, `${item.symbol}-${index}`)}
+                                className={`text-xs font-mono break-all select-all bg-black/60 p-2 pr-8 rounded-sm border block cursor-pointer transition-colors active:bg-black/90 ${
+                                  !item.is_exact 
+                                    ? 'border-dashed border-amber-500/25 hover:border-amber-500/50 text-amber-200 hover:text-amber-100 underline decoration-dashed' 
+                                    : 'border-white/10 hover:border-teal-500/30 text-white hover:text-teal-200'
+                                }`}
+                                title="Click để sao chép tất cả chữ số"
+                              >
+                                {item.value}
+                              </span>
+                              <button
+                                onClick={() => copyToClipboard(item.value, `${item.symbol}-${index}`)}
+                                className="absolute right-2 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-colors"
+                                title="Sao chép vào clipboard"
+                              >
+                                {copiedId === `${item.symbol}-${index}` ? (
+                                  <Check className="w-3.5 h-3.5 text-emerald-400" />
+                                ) : (
+                                  <Copy className="w-3.5 h-3.5" />
+                                )}
+                              </button>
+                            </div>
                           </div>
                         </div>
                       ))}

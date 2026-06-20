@@ -335,6 +335,19 @@ class TrigCriticalAnalyzer:
             pt_meta["x_label"] = label_x
             pt_meta["is_approx_x"] = not is_exact_x
             
+            # Map approximate/complex x positions to readable abbreviations (e.g., x₁) for the SVG table
+            if not is_exact_x and xp not in [sp.oo, -sp.oo]:
+                if xp not in x_subs:
+                    x_id = len(x_subs) + 1
+                    x_symbol = f"x{cls._get_subscript(x_id)}"
+                    x_subs[xp] = {
+                        "symbol": x_symbol,
+                        "val": xp,
+                        "index": index,
+                        "is_exact": False
+                    }
+                pt_meta["x_label"] = x_subs[xp]["symbol"]
+            
             # Determine if it's a pole
             fl_xp = float(xp.evalf())
             is_pole = any(abs(float(pole.evalf()) - fl_xp) < 1e-9 for pole in poles_in_interval)
@@ -381,9 +394,9 @@ class TrigCriticalAnalyzer:
                 pt_meta["is_approx_f"] = not is_exact_f
 
                 # Check if it needs a substitution (complex coordinates substitutions)
-                # If expression representation is too complex to fit inside space, replace with symbol
+                # If expression representation is too complex to fit inside space or not exact, replace with symbol
                 expr_str_val = str(f_val_raw)
-                if len(expr_str_val) > 10 and not f_val_raw.is_integer:
+                if (not is_exact_f) or (len(expr_str_val) > 10 and not f_val_raw.is_integer):
                     if f_val_raw not in y_subs:
                         y_id = len(y_subs) + 1
                         y_symbol = f"y{cls._get_subscript(y_id)}"
@@ -425,7 +438,7 @@ class TrigCriticalAnalyzer:
         # 7. Form Legend
         legend_list = []
         
-        # Describe families under legend
+        # A. Describe families under legend (families of infinite roots)
         for idx, fam in enumerate(root_families, 1):
             legend_list.append({
                 "symbol": f"Họ nghiệm {idx}",
@@ -435,22 +448,89 @@ class TrigCriticalAnalyzer:
                 "type": "x"
             })
 
-        # For substituted decimals
-        for key_val, s_data in y_subs.items():
-            is_exact_y = s_data.get("is_exact", True)
-            if is_exact_y:
-                val_num_str = cls._render_point_label(key_val)
-            else:
-                try:
-                    val_num_str = f"{float(key_val.evalf(35)):.6f}"
-                except Exception:
-                    val_num_str = str(key_val)
-                    
+        # B. Sort and process X substitutions (with 25-digit precision)
+        sorted_x_subs = sorted(list(x_subs.values()), key=lambda s: s["symbol"])
+        for item in sorted_x_subs:
+            val = item["val"]
+            sym = item["symbol"]
+            idx = item["index"]
+            col = columns[idx]
+            
+            # Roles analyzer for column
+            is_local_max = False
+            is_local_min = False
+            if idx > 0 and idx < len(columns) - 1:
+                left_dir = monotony[idx - 1]["direction"]
+                right_dir = monotony[idx]["direction"]
+                if left_dir == "up" and right_dir == "down":
+                    is_local_max = True
+                elif left_dir == "down" and right_dir == "up":
+                    is_local_min = True
+            
+            is_deriv_zero = (col.get("f_prime_val") == "0")
+            
+            roles = []
+            if is_local_max:
+                roles.append("Điểm cực đại (Local Max)")
+            elif is_local_min:
+                roles.append("Điểm cực tiểu (Local Min)")
+            if is_deriv_zero:
+                roles.append("Nghiệm đạo hàm f'(x) = 0")
+            
+            if not roles:
+                roles.append("Điểm khảo sát đặc biệt (Special Survey Point)")
+                
+            role_desc = ", ".join(roles)
+            val_str, is_exact = cls._format_legend_val(val)
+            
             legend_list.append({
-                "symbol": s_data["symbol"],
-                "role": f"Giá trị hàm cực trị của f(x) tại điểm x đặc biệt",
-                "value": val_num_str,
-                "is_exact": is_exact_y,
+                "symbol": sym,
+                "role": role_desc,
+                "value": val_str,
+                "is_exact": is_exact,
+                "type": "x"
+            })
+
+        # C. Sort and process Y substitutions (with 25-digit precision)
+        sorted_y_subs = sorted(list(y_subs.values()), key=lambda s: s["symbol"])
+        for item in sorted_y_subs:
+            val = item["val"]
+            sym = item["symbol"]
+            idx = item["index"]
+            col = columns[idx]
+            
+            xp_raw = col["x_raw"]
+            if xp_raw in x_subs:
+                x_ref = x_subs[xp_raw]["symbol"]
+            else:
+                x_ref = cls._render_point_label(xp_raw)
+                
+            is_local_max = False
+            is_local_min = False
+            if idx > 0 and idx < len(columns) - 1:
+                left_dir = monotony[idx - 1]["direction"]
+                right_dir = monotony[idx]["direction"]
+                if left_dir == "up" and right_dir == "down":
+                    is_local_max = True
+                elif left_dir == "down" and right_dir == "up":
+                    is_local_min = True
+                    
+            roles = []
+            if is_local_max:
+                roles.append(f"Giá trị cực đại của f(x) tại {x_ref}")
+            elif is_local_min:
+                roles.append(f"Giá trị cực tiểu của f(x) tại {x_ref}")
+            else:
+                roles.append(f"Giá trị f(x) tại điểm khảo sát {x_ref}")
+                
+            role_desc = ", ".join(roles)
+            val_str, is_exact = cls._format_legend_val(val)
+            
+            legend_list.append({
+                "symbol": sym,
+                "role": role_desc,
+                "value": val_str,
+                "is_exact": is_exact,
                 "type": "y"
             })
 
@@ -609,17 +689,41 @@ class TrigCriticalAnalyzer:
         step_sz = (end_f - start_f) / num_steps
         roots_numerical = []
 
-        def safe_eval_deriv(val):
+        def refine_root_high_prec(x_guess, x_min_f, x_max_f) -> sp.Expr:
+            """Refines a root guess using sp.nsolve to 40 digits of precision."""
             try:
-                # Avoid poles
-                if any(abs(float(val) - pf) < 1e-5 for pf in poles_f):
-                    return None
-                val_comp = deriv.subs(x, val).evalf(35)
-                if not val_comp.is_finite:
-                    return None
-                return val_comp
+                # Use sp.nsolve with high precision (40 decimal digits)
+                refined = sp.nsolve(deriv, x, x_guess, prec=40)
+                # Verify that the refined root is within the interval/bounds
+                ref_f = float(refined.evalf())
+                if x_min_f - 1e-5 <= ref_f <= x_max_f + 1e-5:
+                    return refined
             except Exception:
-                return None
+                pass
+
+            # Fallback high-precision bisection
+            try:
+                left = sp.Float(x_min_f, 40)
+                right = sp.Float(x_max_f, 40)
+                for _ in range(120): # 120 steps reaches ~7.5e-37 accuracy
+                    mid = (left + right) / 2
+                    # Evaluate derivative at mid with high precision
+                    ymid = deriv.subs(x, mid).evalf(40)
+                    if ymid is None or not ymid.is_finite:
+                        break
+                    if abs(ymid) < 1e-35:
+                        left = mid
+                        break
+                    yleft = deriv.subs(x, left).evalf(40)
+                    if yleft is None or not yleft.is_finite:
+                        break
+                    if yleft * ymid < 0:
+                        right = mid
+                    else:
+                        left = mid
+                return left
+            except Exception:
+                return sp.Float(x_guess, 40)
 
         # Iterate dense sub-ranges
         for i in range(num_steps):
@@ -637,32 +741,11 @@ class TrigCriticalAnalyzer:
                 continue
                 
             if y1_f * y2_f < 0:
-                # Bisection precision searching under 35-digit floating logic
-                try:
-                    left = sp.Float(x1, 35)
-                    right = sp.Float(x2, 35)
-                    
-                    for _ in range(85):
-                        mid = (left + right) / 2
-                        ymid = safe_eval_deriv(mid)
-                        if ymid is None:
-                            break
-                        if abs(ymid) < 1e-30:
-                            left = mid
-                            break
-                        yleft = safe_eval_deriv(left)
-                        if yleft is None:
-                            break
-                        if yleft * ymid < 0:
-                            right = mid
-                        else:
-                            left = mid
-                            
-                    roots_numerical.append(left)
-                except Exception:
-                    pass
+                refined_val = refine_root_high_prec((x1 + x2)/2, x1, x2)
+                roots_numerical.append(refined_val)
             elif abs(y1_f) < 1e-8:
-                roots_numerical.append(sp.Float(x1, 35))
+                refined_val = refine_root_high_prec(x1, x1 - 1e-5, x1 + 1e-5)
+                roots_numerical.append(refined_val)
 
         # Ensure unique, filter out poles and boundaries
         clean_numerical_roots = []
@@ -774,10 +857,13 @@ class TrigCriticalAnalyzer:
             except Exception:
                 pass
 
-            # Fallback to high-precision decimal representation (6 display digits)
-            approx_val = float(r.evalf(35))
+            # Fallback to high-precision decimal representation (25 display digits)
+            try:
+                approx_val = str(r.evalf(25))
+            except Exception:
+                approx_val = f"{float(r):.25f}"
             families.append({
-                "latex": f"x = {approx_val:.6f}{k_suffix}",
+                "latex": f"x = {approx_val}{k_suffix}",
                 "type": "Số thập phân xấp xỉ",
                 "is_exact": False
             })
@@ -804,6 +890,21 @@ class TrigCriticalAnalyzer:
     def _get_subscript(num: int) -> str:
         sub_map = {"0": "₀", "1": "₁", "2": "₂", "3": "₃", "4": "₄", "5": "₅", "6": "₆", "7": "₇", "8": "₈", "9": "₉"}
         return "".join(sub_map.get(char, char) for char in str(num))
+
+    @classmethod
+    def _format_legend_val(cls, val: sp.Expr) -> Tuple[str, bool]:
+        """Formats val to 25-digit float if it is not exact, otherwise nice text."""
+        is_exact, label, _ = cls._classify_exactness(val)
+        if is_exact:
+            # Clean exact value
+            return label, True
+        else:
+            try:
+                # Approximate float: output 25-digit precision
+                dec = val.evalf(25)
+                return str(dec), False
+            except Exception:
+                return str(val), False
 
     @classmethod
     def _format_domain_vnm(cls, expr: sp.Expr) -> str:

@@ -854,6 +854,15 @@ run_evalf()
     }
 
     const runCode = `
+import sys
+# Flush Pyodide import cache for all local BBT modules to ensure updates in .py files are loaded immediately
+modules_to_unload = ['main', 'validator', 'analyzer', 'svg_renderer', 'trig_critical_analyzer', 
+                     'domain_engine', 'asymptote_engine', 'extrema_engine', 'interval_engine', 
+                     'cas_engine', 'parser_engine']
+for mname in list(sys.modules.keys()):
+    if mname in modules_to_unload or mname.startswith('core'):
+        del sys.modules[mname]
+
 import main
 import json
 from validator import ForbiddenFunctionException
