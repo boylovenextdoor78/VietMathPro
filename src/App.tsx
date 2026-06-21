@@ -57,6 +57,7 @@ import * as ss from 'simple-statistics';
 import * as math from 'mathjs';
 import Plot from 'react-plotly.js';
 import 'katex/dist/katex.min.css';
+import { useContainerDimensions, getPerfectSquareRange, usePrecisionAnalysis, HighPrecisionGeometryLab } from './components/SquareViewHelper';
 import { BlockMath, InlineMath } from 'react-katex';
 import { 
   Plus, 
@@ -7461,6 +7462,14 @@ function Mode20() {
   const [range2d, setRange2d] = useState({ x: [-5, 5], y: [-5, 5] });
   const [range3d, setRange3d] = useState({ x: [-5, 5], y: [-5, 5], z: [-5, 5] });
 
+  const containerRef2d = React.useRef<HTMLDivElement>(null);
+  const dims2d = useContainerDimensions(containerRef2d);
+  const adjustedRange2d = useMemo(() => {
+    return getPerfectSquareRange(range2d, dims2d.width, dims2d.height);
+  }, [range2d, dims2d]);
+
+  const { items: precItems, loading: precLoading, error: precError } = usePrecisionAnalysis(exprs2d, adjustedRange2d);
+
   // Deformation parameters for 4D Manifold
   const [epsilon, setEpsilon] = useState(0.2);
   const [k, setK] = useState(1.5);
@@ -7571,15 +7580,96 @@ function Mode20() {
     };
 
     if (activeTab === '2d') {
-      const xMin = range2d.x[0], xMax = range2d.x[1];
+      const xMin = adjustedRange2d.x[0], xMax = adjustedRange2d.x[1];
       const uLong = Array.from({ length: steps * 4 }, (_, i) => xMin + (i * (xMax - xMin)) / (steps * 4 - 1));
       
+      const findRootsOfExpr = (compiled: any, start: number, end: number) => {
+        const checkSteps = 120;
+        const pts = [];
+        const stepSize = (end - start) / checkSteps;
+        let prevX = start;
+        let prevY = NaN;
+        try {
+          prevY = compiled.evaluate({ x: prevX });
+        } catch {}
+
+        for (let i = 1; i <= checkSteps; i++) {
+          const currX = start + i * stepSize;
+          let currY = NaN;
+          try {
+            currY = compiled.evaluate({ x: currX });
+          } catch {
+            continue;
+          }
+
+          if (isNaN(currY) || !isFinite(currY)) {
+            prevX = currX;
+            prevY = currY;
+            continue;
+          }
+
+          if (Math.abs(prevY) < 1e-12) {
+            pts.push(prevX);
+          }
+
+          if (!isNaN(prevY) && isFinite(prevY) && prevY * currY < 0) {
+            let left = prevX;
+            let right = currX;
+            for (let b = 0; b < 8; b++) {
+              const mid = (left + right) / 2;
+              let yMid = NaN;
+              try {
+                yMid = compiled.evaluate({ x: mid });
+              } catch {
+                break;
+              }
+              if (Math.abs(yMid) < 1e-14) {
+                left = mid;
+                break;
+              }
+              if (yMid * prevY < 0) {
+                right = mid;
+              } else {
+                left = mid;
+              }
+            }
+            pts.push((left + right) / 2);
+          }
+
+          prevX = currX;
+          prevY = currY;
+        }
+
+        if (Math.abs(prevY) < 1e-12) {
+          pts.push(prevX);
+        }
+
+        const uniqueRoots: number[] = [];
+        pts.forEach(r => {
+          if (uniqueRoots.length === 0 || Math.abs(r - uniqueRoots[uniqueRoots.length - 1]) > (end - start) / 500) {
+            uniqueRoots.push(r);
+          }
+        });
+        return uniqueRoots;
+      };
+
       exprs2d.forEach(expr => {
         if (!expr.visible || !expr.text.trim()) return;
         try {
           const compiled = math.compile(expr.text);
           const yVals = uLong.map(x => compiled.evaluate({ x }));
           results.plots2d.push({ x: uLong, y: yVals, color: expr.color, name: expr.text });
+
+          const roots = findRootsOfExpr(compiled, xMin, xMax);
+          if (roots.length > 0) {
+            results.plots2d.push({
+              x: roots,
+              y: roots.map(() => 0),
+              isRoot: true,
+              color: expr.color,
+              name: `Nghiệm ${expr.text} = 0`
+            });
+          }
         } catch (e) {
           // Ignore invalid expressions
         }
@@ -7728,7 +7818,7 @@ function Mode20() {
       }
     }
     return results;
-  }, [resolution, range, activeTab, visType4d, exprs2d, exprs3d, exprs4d, range2d, range3d, epsilon, k, lambda0, r5, alpha, ls, nModes, showHyperbolic, showKK, showString, showFractal, showPrimes]);
+  }, [resolution, range, activeTab, visType4d, exprs2d, exprs3d, exprs4d, adjustedRange2d, range3d, epsilon, k, lambda0, r5, alpha, ls, nModes, showHyperbolic, showKK, showString, showFractal, showPrimes]);
 
   const axes4d = useMemo(() => {
     const scale = Math.max(Math.abs(range3d.x[0]), Math.abs(range3d.x[1])) * 1.5;
@@ -8056,24 +8146,47 @@ function Mode20() {
 
         {/* Visualization Panel */}
         <div className="lg:col-span-9">
-          <div className="border border-[#141414] bg-[#F8F7F4] shadow-[8px_8px_0px_0px_rgba(20,20,20,1)] overflow-hidden h-[600px] relative">
+          <div ref={containerRef2d} className="border border-[#141414] bg-[#F8F7F4] shadow-[8px_8px_0px_0px_rgba(20,20,20,1)] overflow-hidden h-[500px] relative">
             {activeTab === '2d' && (
               <Plot
-                data={generateData.plots2d.map((plot: any) => ({
-                  x: plot.x,
-                  y: plot.y,
-                  mode: 'lines',
-                  type: 'scatter',
-                  line: { color: plot.color, width: 2 },
-                  name: plot.name
-                }))}
+                data={generateData.plots2d.map((plot: any) => {
+                  if (plot.isRoot) {
+                    return {
+                      x: plot.x,
+                      y: plot.y,
+                      mode: 'markers+text',
+                      type: 'scatter',
+                      marker: {
+                        color: '#E11D48',
+                        size: 9,
+                        line: { color: '#141414', width: 2 }
+                      },
+                      text: plot.x.map((xVal: number) => `x ≈ ${xVal.toFixed(2)}`),
+                      textposition: 'top center',
+                      textfont: {
+                        family: 'JetBrains Mono, monospace',
+                        size: 10,
+                        color: '#E11D48'
+                      },
+                      name: plot.name
+                    };
+                  }
+                  return {
+                    x: plot.x,
+                    y: plot.y,
+                    mode: 'lines',
+                    type: 'scatter',
+                    line: { color: plot.color, width: 2 },
+                    name: plot.name
+                  };
+                })}
                 layout={{
                   autosize: true,
                   margin: { l: 40, r: 20, b: 40, t: 20 },
                   paper_bgcolor: 'rgba(0,0,0,0)',
                   plot_bgcolor: 'rgba(0,0,0,0)',
-                  xaxis: { title: 'X', gridcolor: '#ccc', gridwidth: 1, zerolinecolor: '#141414', range: range2d.x, griddash: 'dot', dtick: (range2d.x[1] - range2d.x[0]) / 10 },
-                  yaxis: { title: 'Y', gridcolor: '#ccc', gridwidth: 1, zerolinecolor: '#141414', range: range2d.y, scaleanchor: 'x', scaleratio: 1, griddash: 'dot', dtick: (range2d.y[1] - range2d.y[0]) / 10 },
+                  xaxis: { title: 'X', gridcolor: '#ccc', gridwidth: 1, zerolinecolor: '#141414', range: adjustedRange2d.x, griddash: 'dot', dtick: (adjustedRange2d.x[1] - adjustedRange2d.x[0]) / 10 },
+                  yaxis: { title: 'Y', gridcolor: '#ccc', gridwidth: 1, zerolinecolor: '#141414', range: adjustedRange2d.y, scaleanchor: 'x', scaleratio: 1, griddash: 'dot', dtick: (adjustedRange2d.y[1] - adjustedRange2d.y[0]) / 10 },
                   dragmode: 'pan',
                   showlegend: true,
                   legend: { x: 0, y: 1, bgcolor: 'rgba(255,255,255,0.8)' }
@@ -8259,6 +8372,9 @@ function Mode20() {
               </div>
             )}
           </div>
+          {activeTab === '2d' && (
+            <HighPrecisionGeometryLab items={precItems} loading={precLoading} error={precError} />
+          )}
         </div>
       </div>
     </div>

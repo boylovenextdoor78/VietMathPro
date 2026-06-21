@@ -258,6 +258,22 @@ async function startServer() {
     }
   });
 
+  app.post('/api/math/precision-geometry', async (req, res) => {
+    try {
+      const { expressions, xMin, xMax, yMin, yMax } = req.body;
+      const resultStr = await sympyService.analyzePrecisionGeometry(
+        expressions,
+        Number(xMin),
+        Number(xMax),
+        Number(yMin),
+        Number(yMax)
+      );
+      res.json(JSON.parse(resultStr));
+    } catch (e: any) {
+      res.status(400).json({ error: e.message });
+    }
+  });
+
   app.post('/api/math/bbt', async (req, res) => {
     try {
       const { expr } = req.body;

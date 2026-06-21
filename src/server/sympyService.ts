@@ -887,6 +887,288 @@ res_val
       domain_vnm: parsed.domain_vnm || "D = \u211d"
     };
   }
+
+  async analyzePrecisionGeometry(
+    expressions: string[],
+    xMin: number,
+    xMax: number,
+    yMin: number,
+    yMax: number
+  ): Promise<string> {
+    const code = `
+def run_precision_geometry():
+    import json
+    import sympy as sp
+    import mpmath
+    from sympy import Symbol, Float, diff, N, S
+    
+    try:
+        expr_strs = json.loads(expr_strs_json)
+        x_min_val = float(x_min_str)
+        x_max_val = float(x_max_str)
+        y_min_val = float(y_min_str)
+        y_max_val = float(y_max_str)
+        
+        parsed_list = []
+        for s in expr_strs:
+            p = safe_parse(s)
+            if p is not None:
+                parsed_list.append((s, p))
+                
+        results = []
+        
+        # Draw from parsed_list to find the symbol of 'x' to ensure absolute compatibility
+        x_sym = None
+        for _, expr in parsed_list:
+            for s in expr.free_symbols:
+                if s.name == 'x':
+                    x_sym = s
+                    break
+            if x_sym is not None:
+                break
+        if x_sym is None:
+            x_sym = Symbol('x', real=True)
+            
+        # Set mpmath precision
+        mpmath.mp.dps = 55
+        x_min_mp = mpmath.mpf(x_min_str)
+        x_max_mp = mpmath.mpf(x_max_str)
+        
+        # 200 intervals for fine numerical scanning
+        steps = 200
+        h_mp = (x_max_mp - x_min_mp) / steps
+        x_points = [x_min_mp + i * h_mp for i in range(steps + 1)]
+        
+        def format_to_25(val):
+            try:
+                v_eval = N(val, 30)
+                formatted = "{:.25f}".format(v_eval)
+                if formatted.startswith("-") and all(c in "0.-" for c in formatted):
+                    formatted = formatted[1:]
+                return formatted
+            except Exception:
+                return str(val)
+
+        def make_evaluator(sympy_expr):
+            try:
+                fast_func = sp.lambdify(x_sym, sympy_expr, 'mpmath')
+                fast_func(0.5)
+                def evaluator(val):
+                    try:
+                        res = fast_func(val)
+                        if hasattr(res, 'imag') and abs(res.imag) > 1e-25:
+                            return None
+                        if hasattr(res, 'real'):
+                            return mpmath.mpf(res.real)
+                        return mpmath.mpf(res)
+                    except Exception:
+                        try:
+                            res_sym = sympy_expr.subs(x_sym, val).evalf(55)
+                            return mpmath.mpf(res_sym)
+                        except Exception:
+                            return None
+                return evaluator
+            except Exception:
+                def evaluator_fallback(val):
+                    try:
+                        res_sym = sympy_expr.subs(x_sym, val).evalf(55)
+                        return mpmath.mpf(res_sym)
+                    except Exception:
+                        return None
+                return evaluator_fallback
+
+        def h_bisect(func, l_val, r_val, tol=mpmath.mpf('1e-35'), max_iter=100):
+            try:
+                fl = func(l_val)
+                fr = func(r_val)
+                if fl is None or fr is None:
+                    return None
+                if abs(fl) < tol: return l_val
+                if abs(fr) < tol: return r_val
+                if fl * fr > 0:
+                    return None  # No crossing detected
+                    
+                left = l_val
+                right = r_val
+                val_left = fl
+                val_right = fr
+                for _ in range(max_iter):
+                    mid = (left + right) / 2
+                    fm = func(mid)
+                    if fm is None:
+                        return None
+                    if abs(fm) < tol or (right - left) < tol:
+                        return mid
+                    if val_left * fm < 0:
+                        right = mid
+                        val_right = fm
+                    else:
+                        left = mid
+                        val_left = fm
+                return (left + right) / 2
+            except Exception:
+                return None
+
+        def find_roots_calculus_based(val_eval, d_val_eval):
+            # 1. Finds all critical points using derivative's crossings
+            crit_pts = [x_min_mp]
+            for i in range(steps):
+                da = d_val_eval(x_points[i])
+                db = d_val_eval(x_points[i+1])
+                if da is not None and db is not None and not mpmath.isnan(da) and not mpmath.isnan(db):
+                    if da * db <= 0:
+                        rx = h_bisect(d_val_eval, x_points[i], x_points[i+1])
+                        if rx is not None:
+                            crit_pts.append(rx)
+            crit_pts.append(x_max_mp)
+            
+            # Filter and sort critical bounds
+            unique_bounds = []
+            for pt in sorted(crit_pts):
+                if not unique_bounds or abs(pt - unique_bounds[-1]) > 1e-12:
+                    unique_bounds.append(pt)
+            
+            # 2. In each sub-interval, find the roots where crossing occurs
+            roots = []
+            for i in range(len(unique_bounds)-1):
+                a = unique_bounds[i]
+                b = unique_bounds[i+1]
+                va = val_eval(a)
+                vb = val_eval(b)
+                if va is not None and vb is not None and not mpmath.isnan(va) and not mpmath.isnan(vb):
+                    if va * vb <= 0:
+                        rx = h_bisect(val_eval, a, b)
+                        if rx is not None:
+                            roots.append(rx)
+                    else:
+                        # Check touch points (val_eval ~ 0 near critical point bounded here)
+                        mid = (a + b) / 2
+                        vm = val_eval(mid)
+                        if vm is not None and abs(vm) < 1e-12:
+                            roots.append(mid)
+            
+            # Deduplicate roots
+            unique_roots = []
+            for r in sorted(roots):
+                if not unique_roots or abs(r - unique_roots[-1]) > 1e-12:
+                    if x_min_mp - 1e-12 <= r <= x_max_mp + 1e-12:
+                        unique_roots.append(r)
+            return unique_roots
+
+        # Build evaluators for functions and their derivatives
+        funcs_data = []
+        for expr_str, expr in parsed_list:
+            try:
+                f_eval = make_evaluator(expr)
+                deriv = diff(expr, x_sym)
+                df_eval = make_evaluator(deriv)
+                funcs_data.append({
+                    "str": expr_str,
+                    "expr": expr,
+                    "f_eval": f_eval,
+                    "df_eval": df_eval
+                })
+            except Exception:
+                pass
+
+        # 1. Finding roots of f(x) = 0 and critical points of f'(x) = 0
+        for data in funcs_data:
+            expr_str = data["str"]
+            f_eval = data["f_eval"]
+            df_eval = data["df_eval"]
+            
+            # Find all roots of f(x) = 0 using calculus of partition
+            roots_found = find_roots_calculus_based(f_eval, df_eval)
+            for rx in roots_found:
+                yr = f_eval(rx)
+                if yr is not None:
+                    results.append({
+                        "id": f"root-{expr_str}-{format_to_25(rx)}",
+                        "type": "root",
+                        "label": f"{expr_str} Nghiệm (f(x) = 0)",
+                        "expressionName": expr_str,
+                        "x": format_to_25(rx),
+                        "y": format_to_25(yr),
+                        "xNum": float(rx),
+                        "yNum": float(yr)
+                    })
+            
+            # Find critical points of f'(x) = 0 by searching roots of derivative
+            # For derivative f'(x) critical points, we can partition using f''(x)
+            try:
+                deriv2 = diff(data["expr"], x_sym, 2)
+                d2f_eval = make_evaluator(deriv2)
+                crits_found = find_roots_calculus_based(df_eval, d2f_eval)
+                for rx in crits_found:
+                    yr = f_eval(rx)
+                    if yr is not None:
+                        # Completely removed visible y range filtering so they are not missing from panel
+                        results.append({
+                            "id": f"crit-{expr_str}-{format_to_25(rx)}",
+                            "type": "critical",
+                            "label": f"{expr_str} Cực trị (đạo hàm f′(x) = 0)",
+                            "expressionName": expr_str,
+                            "x": format_to_25(rx),
+                            "y": format_to_25(yr),
+                            "xNum": float(rx),
+                            "yNum": float(yr)
+                        })
+            except Exception:
+                pass
+
+        # 2. Intersections of f(x) = g(x)
+        for idx1 in range(len(funcs_data)):
+            for idx2 in range(idx1 + 1, len(funcs_data)):
+                d1 = funcs_data[idx1]
+                d2 = funcs_data[idx2]
+                
+                # Difference evaluator capturing d1 and d2 correctly using default arguments to prevent late-binding issues
+                diff_eval = lambda pt, f1=d1["f_eval"], f2=d2["f_eval"]: (f1(pt) - f2(pt)) if (f1(pt) is not None and f2(pt) is not None) else None
+                diff_deriv = lambda pt, df1=d1["df_eval"], df2=d2["df_eval"]: (df1(pt) - df2(pt)) if (df1(pt) is not None and df2(pt) is not None) else None
+                
+                isects_found = find_roots_calculus_based(diff_eval, diff_deriv)
+                for rx in isects_found:
+                    yr = d1["f_eval"](rx)
+                    if yr is not None:
+                        # Completely removed visible y range filtering so intersections are never missing
+                        results.append({
+                            "id": f"isect-{d1['str']}-{d2['str']}-{format_to_25(rx)}",
+                            "type": "intersection",
+                            "label": f"Giao điểm {d1['str']} ∩ {d2['str']}",
+                            "expressionName": f"{d1['str']} & {d2['str']}",
+                            "x": format_to_25(rx),
+                            "y": format_to_25(yr),
+                            "xNum": float(rx),
+                            "yNum": float(yr)
+                        })
+
+        # Deduplicate overlapping points
+        unique_list = []
+        for r in results:
+            dup = False
+            for u in unique_list:
+                if u["type"] == r["type"] and u["expressionName"] == r["expressionName"]:
+                    if abs(u["xNum"] - r["xNum"]) < (x_max_val - x_min_val) / 2000.0:
+                        dup = True
+                        break
+            if not dup:
+                unique_list.append(r)
+                
+        unique_list.sort(key=lambda t: t["xNum"])
+        return json.dumps({"points": unique_list})
+    except Exception as ie:
+        return json.dumps({"error": str(ie)})
+
+run_precision_geometry()
+`;
+    return this.runSympyCode(code, {
+      expr_strs_json: JSON.stringify(expressions),
+      x_min_str: xMin.toString(),
+      x_max_str: xMax.toString(),
+      y_min_str: yMin.toString(),
+      y_max_str: yMax.toString(),
+    });
+  }
 }
 
 export const sympyService = new SympyService();
