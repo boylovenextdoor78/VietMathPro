@@ -24,9 +24,75 @@ export interface MathResult {
   data?: any;
 }
 
+const preprocessDMSExpressions = (expr: string): string => {
+  if (!expr) return expr;
+
+  // 1. Process trig functions of DMS first: sin, cos, tan
+  const trigRegex = /(sin|cos|tan)\s*\(\s*(-?\d+(?:\.\d+)?)\s*°\s*(\d+(?:\.\d+)?)\s*'\s*(\d+(?:\.\d+)?)\s*"\s*\)/gi;
+  
+  let processed = expr.replace(trigRegex, (match, op, d, m, s) => {
+    const OriginalPrec = Decimal.precision;
+    Decimal.set({ precision: 100 });
+    try {
+      const pi = Decimal.acos(new Decimal(-1));
+      const decD = new Decimal(d);
+      const decM = new Decimal(m || '0');
+      const decS = new Decimal(s || '0');
+      
+      const absD = decD.abs();
+      const frac = decM.dividedBy(60).plus(decS.dividedBy(3600));
+      const deg = absD.plus(frac);
+      const totalDeg = decD.isNegative() ? deg.negated() : deg;
+      
+      const rad = totalDeg.times(pi).dividedBy(180);
+      
+      let val: Decimal;
+      const lowerOp = op.toLowerCase();
+      if (lowerOp === 'sin') {
+        val = rad.sin();
+      } else if (lowerOp === 'cos') {
+        val = rad.cos();
+      } else {
+        val = rad.tan();
+      }
+      return val.toFixed(35); // 35 digits standard precision
+    } catch (e) {
+      console.error("Error in DMS trig preprocessing:", e);
+      return match;
+    } finally {
+      Decimal.set({ precision: OriginalPrec });
+    }
+  });
+
+  // 2. Process raw DMS angles not inside trig functions
+  const rawDmsRegex = /(-?\d+(?:\.\d+)?)\s*°\s*(\d+(?:\.\d+)?)\s*'\s*(\d+(?:\.\d+)?)\s*"/g;
+  processed = processed.replace(rawDmsRegex, (match, d, m, s) => {
+    const OriginalPrec = Decimal.precision;
+    Decimal.set({ precision: 100 });
+    try {
+      const decD = new Decimal(d);
+      const decM = new Decimal(m || '0');
+      const decS = new Decimal(s || '0');
+      
+      const absD = decD.abs();
+      const frac = decM.dividedBy(60).plus(decS.dividedBy(3600));
+      const deg = absD.plus(frac);
+      const totalDeg = decD.isNegative() ? deg.negated() : deg;
+      return totalDeg.toFixed(35);
+    } catch (e) {
+      console.error("Error in raw DMS preprocessing:", e);
+      return match;
+    } finally {
+      Decimal.set({ precision: OriginalPrec });
+    }
+  });
+
+  return processed;
+};
+
 export async function solveAdvancedMathLocal(prompt: string, mode: string, userFunctions?: { f: string, g: string, h: string }, angleMode: 'rad' | 'deg' = 'rad'): Promise<MathResult> {
   try {
-    let expr = prompt.trim();
+    let expr = preprocessDMSExpressions(prompt.trim());
     const lowerExpr = expr.toLowerCase();
 
     // 0.a Prime Factorization

@@ -3549,6 +3549,73 @@ function Mode11({ initialQuery, userFunctions }: { initialQuery?: string, userFu
     setDmsX(''); setDmsY(''); setDmsZ(''); setDmsError('');
   };
 
+  const preprocessDMSExpressions = (expr: string): string => {
+    if (!expr) return expr;
+
+    // 1. Process trig functions of DMS first: sin, cos, tan
+    // Matches expressions like sin(30° 15' 20") with or without spaces, case-insensitively
+    const trigRegex = /(sin|cos|tan)\s*\(\s*(-?\d+(?:\.\d+)?)\s*°\s*(\d+(?:\.\d+)?)\s*'\s*(\d+(?:\.\d+)?)\s*"\s*\)/gi;
+    
+    let processed = expr.replace(trigRegex, (match, op, d, m, s) => {
+      const OriginalPrec = Decimal.precision;
+      Decimal.set({ precision: 100 });
+      try {
+        const pi = Decimal.acos(new Decimal(-1));
+        const decD = new Decimal(d);
+        const decM = new Decimal(m || '0');
+        const decS = new Decimal(s || '0');
+        
+        const absD = decD.abs();
+        const frac = decM.dividedBy(60).plus(decS.dividedBy(3600));
+        const deg = absD.plus(frac);
+        const totalDeg = decD.isNegative() ? deg.negated() : deg;
+        
+        const rad = totalDeg.times(pi).dividedBy(180);
+        
+        let val: Decimal;
+        const lowerOp = op.toLowerCase();
+        if (lowerOp === 'sin') {
+          val = rad.sin();
+        } else if (lowerOp === 'cos') {
+          val = rad.cos();
+        } else {
+          val = rad.tan();
+        }
+        return val.toFixed(35); // 35 digits standard precision
+      } catch (e) {
+        console.error("Error in DMS trig preprocessing:", e);
+        return match;
+      } finally {
+        Decimal.set({ precision: OriginalPrec });
+      }
+    });
+
+    // 2. Process raw DMS angles not inside trig functions
+    const rawDmsRegex = /(-?\d+(?:\.\d+)?)\s*°\s*(\d+(?:\.\d+)?)\s*'\s*(\d+(?:\.\d+)?)\s*"/g;
+    processed = processed.replace(rawDmsRegex, (match, d, m, s) => {
+      const OriginalPrec = Decimal.precision;
+      Decimal.set({ precision: 100 });
+      try {
+        const decD = new Decimal(d);
+        const decM = new Decimal(m || '0');
+        const decS = new Decimal(s || '0');
+        
+        const absD = decD.abs();
+        const frac = decM.dividedBy(60).plus(decS.dividedBy(3600));
+        const deg = absD.plus(frac);
+        const totalDeg = decD.isNegative() ? deg.negated() : deg;
+        return totalDeg.toFixed(35);
+      } catch (e) {
+        console.error("Error in raw DMS preprocessing:", e);
+        return match;
+      } finally {
+        Decimal.set({ precision: OriginalPrec });
+      }
+    });
+
+    return processed;
+  };
+
   const calculateQuery = async (queryToUse: string) => {
     setLoading(true);
     setShowApprox(true);
@@ -3584,6 +3651,7 @@ function Mode11({ initialQuery, userFunctions }: { initialQuery?: string, userFu
     
     try {
       let finalNumeric = "";
+      let finalNumeric30 = "";
 
       // 1. Try mathjs if expression is available
       if (currentResult.data?.mathjs_expression) {
@@ -3627,10 +3695,19 @@ function Mode11({ initialQuery, userFunctions }: { initialQuery?: string, userFu
             gamma: computeGamma
           }, { override: true });
 
-          const val = bigMath.evaluate(currentResult.data.mathjs_expression);
+          const cleanedExpr = preprocessDMSExpressions(currentResult.data.mathjs_expression);
+          const val = bigMath.evaluate(cleanedExpr);
           const strVal = bigMath.format(val, { notation: 'fixed', precision: 30 });
-          const parts = strVal.split('.');
-          finalNumeric = parts.length === 2 ? parts[0] + '.' + parts[1].substring(0, 25) : strVal;
+          
+          try {
+            const decVal = new Decimal(strVal);
+            finalNumeric = decVal.toFixed(25);
+            finalNumeric30 = decVal.toFixed(30);
+          } catch {
+            const parts = strVal.split('.');
+            finalNumeric = parts.length === 2 ? parts[0] + '.' + parts[1].substring(0, 25) : strVal;
+            finalNumeric30 = strVal;
+          }
         } catch (e) {
           console.warn("MathJS fallback triggered:", e);
         }
@@ -3676,10 +3753,11 @@ function Mode11({ initialQuery, userFunctions }: { initialQuery?: string, userFu
           return;
         }
 
+        const cleanedExprToEval = preprocessDMSExpressions(exprToEval);
         const res = await fetch('/api/math/evalf', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ expr: exprToEval, precision: 25 })
+          body: JSON.stringify({ expr: cleanedExprToEval, precision: 35 })
         });
         
         if (!res.ok) {
@@ -3690,7 +3768,14 @@ function Mode11({ initialQuery, userFunctions }: { initialQuery?: string, userFu
 
         const data = await res.json();
         if (data.result) {
-          finalNumeric = data.result;
+          try {
+            const decVal = new Decimal(data.result);
+            finalNumeric = decVal.toFixed(25);
+            finalNumeric30 = decVal.toFixed(30);
+          } catch {
+            finalNumeric = data.result;
+            finalNumeric30 = data.result;
+          }
         } else if (data.error) {
           console.warn("SymPy EvalF failed:", data.error);
         }
@@ -3703,7 +3788,8 @@ function Mode11({ initialQuery, userFunctions }: { initialQuery?: string, userFu
             ...prev,
             data: {
               ...(prev.data || {}),
-              numeric: finalNumeric
+              numeric: finalNumeric,
+              numeric30: finalNumeric30
             }
           };
         });
@@ -3920,9 +4006,17 @@ function Mode11({ initialQuery, userFunctions }: { initialQuery?: string, userFu
               <pre className="whitespace-pre-wrap text-lg leading-relaxed">{result.content}</pre>
             )}
             {showApprox && result.data?.numeric && (
-              <div className="mt-4 pt-4 border-t border-[#E4E3E0]/20">
-                <div className="text-[10px] uppercase tracking-widest opacity-40 mb-2">25-Digit Precision (Truncated)</div>
-                <div className="text-xl text-[#E4E3E0] break-all font-serif italic">{result.data.numeric}</div>
+              <div className="mt-4 pt-4 border-t border-[#E4E3E0]/20 space-y-4">
+                {result.data?.numeric30 && (
+                  <div>
+                    <div className="text-[10px] uppercase tracking-widest opacity-40 mb-1">30-Digit Precision (Standard)</div>
+                    <div className="text-xl text-[#E4E3E0] break-all font-serif italic">{result.data.numeric30}</div>
+                  </div>
+                )}
+                <div>
+                  <div className="text-[10px] uppercase tracking-widest opacity-40 mb-1">25-Digit Precision (Rounded)</div>
+                  <div className="text-xl text-[#E4E3E0] break-all font-serif italic">{result.data.numeric}</div>
+                </div>
               </div>
             )}
           </div>

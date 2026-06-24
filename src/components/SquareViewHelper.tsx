@@ -211,7 +211,8 @@ export function usePrecisionAnalysis(
         });
 
         if (!res.ok) {
-          throw new Error('Tính toán toạ độ từ CAS backend thất bại');
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.error || 'Tính toán toạ độ từ CAS backend thất bại');
         }
 
         const data = await res.json();

@@ -1,0 +1,536 @@
+2026-06-24T09:16:05.357Z vite:config config file loaded in 249.69ms
+2026-06-24T09:16:05.358Z vite:env loading env files: [ '.env', '.env.local', '.env.production', '.env.production.local' ]
+2026-06-24T09:16:05.359Z vite:env env files loaded in 0.59ms
+2026-06-24T09:16:05.360Z vite:env using resolved env: {
+  GOOGLE_RUNTIME: 'nodejs22',
+  NO_UPDATE_NOTIFIER: 'true',
+  LANGUAGE: 'en_US:en',
+  npm_config_user_agent: 'npm/10.9.8 node/v22.23.0 linux x64 workspaces/false',
+  NODE_VERSION: '22.23.0',
+  APP_URL: 'https://ais-dev-2nxi2pe4srzwuutz3kw32t-629589164434.asia-southeast1.run.app',
+  YARN_VERSION: '1.22.22',
+  K_REVISION: 'ais-dev-2nxi2pe4srzwuutz3kw32t-00003-h4v',
+  CONTROL_PLANE_PORT: '8000',
+  npm_node_execpath: '/usr/local/bin/node',
+  SHLVL: '0',
+  DEFAULT_APP_PORT: '3000',
+  npm_config_noproxy: '',
+  PORT: '8080',
+  HOME: '/root',
+  npm_package_json: '/app/applet/package.json',
+  NODE_OPTIONS: '--max-old-space-size=3072',
+  npm_config_userconfig: '/root/.npmrc',
+  npm_config_local_prefix: '/app/applet',
+  NG_ALLOWED_HOSTS: 'ais-dev-2nxi2pe4srzwuutz3kw32t-629589164434.asia-southeast1.run.app',
+  COLOR: '0',
+  CLOUD_RUN_TIMEOUT_SECONDS: '3600',
+  K_CONFIGURATION: 'ais-dev-2nxi2pe4srzwuutz3kw32t',
+  APPLET_ID: '46edbb47-d951-4d06-a78a-0739989e62d0',
+  _: '/app/control-plane-api/control-plane-api',
+  npm_config_prefix: '/usr/local',
+  npm_config_npm_version: '10.9.8',
+  APPLET_DIR: 'applet',
+  GOMEMLIMIT: '512MiB',
+  CONTROL_PLANE_API_DIR: 'control-plane-api',
+  npm_config_node_gyp: '/usr/local/lib/node_modules/npm/node_modules/node-gyp/bin/node-gyp.js',
+  PATH: '/app/applet/node_modules/.bin:/app/applet/node_modules/.bin:/app/node_modules/.bin:/node_modules/.bin:/usr/local/lib/node_modules/npm/node_modules/@npmcli/run-script/lib/node-gyp-bin:/app/applet/node_modules/.bin:/app/applet/node_modules/.bin:/app/node_modules/.bin:/node_modules/.bin:/usr/local/lib/node_modules/npm/node_modules/@npmcli/run-script/lib/node-gyp-bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+  NEXT_TELEMETRY_DISABLED: '',
+  NODE: '/usr/local/bin/node',
+  npm_package_name: 'react-example',
+  CNB_USER_ID: '33',
+  CNB_GROUP_ID: '33',
+  APP_DIR: '/app/applet',
+  LANG: 'en_US.UTF-8',
+  npm_lifecycle_script: 'vite',
+  K_SERVICE: 'ais-dev-2nxi2pe4srzwuutz3kw32t',
+  npm_package_version: '0.0.0',
+  npm_lifecycle_event: 'npx',
+  NGINX_PORT: '8080',
+  npm_config_globalconfig: '/usr/local/etc/npmrc',
+  npm_config_init_module: '/root/.npm-init.js',
+  NPM_CONFIG_CACHE: '/opt/npm-cache',
+  PWD: '/app/applet',
+  LC_ALL: 'en_US.UTF-8',
+  npm_execpath: '/usr/local/lib/node_modules/npm/bin/npm-cli.js',
+  GEMINI_API_KEY: 'AIzaSyBf_yymGy6MVhqoBeokXrOu6SN4_7wjjmY',
+  npm_config_global_prefix: '/usr/local',
+  AUTHORIZED_SERVICE_ACCOUNT_EMAIL: 'ais-sandbox@ais-asia-southeast1-976720a954.iam.gserviceaccount.com',
+  npm_command: 'exec',
+  CSP_HEADER_VALUE: "frame-ancestors 'self' https://*.google.com https://localhost.corp.google.com:26001;",
+  NODE_ENV: 'production',
+  CNB_STACK_ID: 'google.gae.22',
+  INIT_CWD: '/app/applet',
+  EDITOR: 'vi',
+  DEBUG: 'vite:*'
+}
+2026-06-24T09:16:05.364Z vite:env loading env files: [
+  '/app/applet/.env',
+  '/app/applet/.env.local',
+  '/app/applet/.env.production',
+  '/app/applet/.env.production.local'
+]
+2026-06-24T09:16:05.364Z vite:env env files loaded in 0.32ms
+2026-06-24T09:16:05.364Z vite:env using resolved env: {}
+2026-06-24T09:16:05.405Z vite:config using resolved config: {
+  plugins: [
+    'vite:build-metadata',
+    'vite:watch-package-data',
+    'alias',
+    'vite:react-babel',
+    'vite:react-refresh',
+    '@tailwindcss/vite:scan',
+    '@tailwindcss/vite:generate:build',
+    'vite:modulepreload-polyfill',
+    'vite:resolve',
+    'vite:html-inline-proxy',
+    'vite:css',
+    'vite:esbuild',
+    'vite:json',
+    'vite:wasm-helper',
+    'vite:worker',
+    'vite:asset',
+    'vite:react-virtual-preamble',
+    'vite:wasm-fallback',
+    'vite:define',
+    'vite:css-post',
+    'vite:build-html',
+    'vite:worker-import-meta-url',
+    'vite:asset-import-meta-url',
+    'vite:force-systemjs-wrap-complete',
+    'commonjs',
+    'vite:data-uri',
+    'vite:rollup-options-plugins',
+    'vite:dynamic-import-vars',
+    'vite:import-glob',
+    'vite:build-import-analysis',
+    'vite:esbuild-transpile',
+    'vite:terser',
+    'vite:manifest',
+    'vite:ssr-manifest',
+    'vite:reporter',
+    'vite:load-fallback'
+  ],
+  define: {
+    'process.env.GEMINI_API_KEY': '"AIzaSyBf_yymGy6MVhqoBeokXrOu6SN4_7wjjmY"'
+  },
+  resolve: {
+    externalConditions: [ 'node' ],
+    extensions: [
+      '.mjs',  '.js',
+      '.mts',  '.ts',
+      '.jsx',  '.tsx',
+      '.json'
+    ],
+    dedupe: [],
+    noExternal: [],
+    external: [],
+    preserveSymlinks: false,
+    alias: [
+      { find: '@', replacement: '/app/applet' },
+      { find: 'react', replacement: '/app/applet/node_modules/react' },
+      {
+        find: 'react-dom',
+        replacement: '/app/applet/node_modules/react-dom'
+      },
+      {
+        find: /^\/?@vite\/env/,
+        replacement: '/@fs/app/applet/node_modules/vite/dist/client/env.mjs'
+      },
+      {
+        find: /^\/?@vite\/client/,
+        replacement: '/@fs/app/applet/node_modules/vite/dist/client/client.mjs'
+      }
+    ],
+    mainFields: [ 'browser', 'module', 'jsnext:main', 'jsnext' ],
+    conditions: [ 'module', 'browser', 'development|production' ],
+    builtins: []
+  },
+  server: {
+    port: 5173,
+    strictPort: false,
+    host: undefined,
+    allowedHosts: [],
+    https: undefined,
+    open: false,
+    proxy: undefined,
+    cors: {
+      origin: /^https?:\/\/(?:(?:[^:]+\.)?localhost|127\.0\.0\.1|\[::1\])(?::\d+)?$/
+    },
+    headers: {},
+    warmup: { clientFiles: [], ssrFiles: [] },
+    middlewareMode: false,
+    fs: {
+      strict: true,
+      deny: [ '.env', '.env.*', '*.{crt,pem}', '**/.git/**' ],
+      allow: [ '/app/applet' ]
+    },
+    preTransformRequests: true,
+    perEnvironmentStartEndDuringDev: false,
+    sourcemapIgnoreList: [Function: isInNodeModules$1],
+    hmr: true
+  },
+  build: {
+    target: [ 'es2020', 'edge88', 'firefox78', 'chrome87', 'safari14' ],
+    polyfillModulePreload: true,
+    modulePreload: { polyfill: true },
+    outDir: 'dist',
+    assetsDir: 'assets',
+    assetsInlineLimit: 4096,
+    sourcemap: false,
+    terserOptions: {},
+    rollupOptions: { onwarn: [Function: onwarn] },
+    commonjsOptions: { include: [ /node_modules/ ], extensions: [ '.js', '.cjs' ] },
+    dynamicImportVarsOptions: { warnOnError: true, exclude: [ /node_modules/ ] },
+    write: true,
+    emptyOutDir: null,
+    copyPublicDir: true,
+    manifest: false,
+    lib: false,
+    ssrManifest: false,
+    ssrEmitAssets: false,
+    reportCompressedSize: true,
+    chunkSizeWarningLimit: 500,
+    watch: null,
+    cssCodeSplit: true,
+    minify: 'esbuild',
+    ssr: false,
+    emitAssets: true,
+    createEnvironment: [Function: createEnvironment],
+    cssTarget: [ 'es2020', 'edge88', 'firefox78', 'chrome87', 'safari14' ],
+    cssMinify: true
+  },
+  esbuild: { jsxDev: false, jsx: 'automatic', jsxImportSource: undefined },
+  optimizeDeps: {
+    include: [
+      'react',
+      'react-dom',
+      'react/jsx-dev-runtime',
+      'react/jsx-runtime'
+    ],
+    exclude: [],
+    needsInterop: [],
+    extensions: [],
+    disabled: undefined,
+    holdUntilCrawlEnd: true,
+    force: false,
+    noDiscovery: false,
+    esbuildOptions: { preserveSymlinks: false, jsx: 'automatic' }
+  },
+  environments: {
+    client: {
+      define: {
+        'process.env.GEMINI_API_KEY': '"AIzaSyBf_yymGy6MVhqoBeokXrOu6SN4_7wjjmY"'
+      },
+      resolve: {
+        externalConditions: [ 'node' ],
+        extensions: [
+          '.mjs',  '.js',
+          '.mts',  '.ts',
+          '.jsx',  '.tsx',
+          '.json'
+        ],
+        dedupe: [],
+        noExternal: [],
+        external: [],
+        preserveSymlinks: false,
+        alias: [
+          { find: '@', replacement: '/app/applet' },
+          {
+            find: 'react',
+            replacement: '/app/applet/node_modules/react'
+          },
+          {
+            find: 'react-dom',
+            replacement: '/app/applet/node_modules/react-dom'
+          },
+          {
+            find: /^\/?@vite\/env/,
+            replacement: '/@fs/app/applet/node_modules/vite/dist/client/env.mjs'
+          },
+          {
+            find: /^\/?@vite\/client/,
+            replacement: '/@fs/app/applet/node_modules/vite/dist/client/client.mjs'
+          }
+        ],
+        mainFields: [ 'browser', 'module', 'jsnext:main', 'jsnext' ],
+        conditions: [ 'module', 'browser', 'development|production' ],
+        builtins: []
+      },
+      keepProcessEnv: false,
+      consumer: 'client',
+      optimizeDeps: {
+        include: [
+          'react',
+          'react-dom',
+          'react/jsx-dev-runtime',
+          'react/jsx-runtime'
+        ],
+        exclude: [],
+        needsInterop: [],
+        extensions: [],
+        disabled: undefined,
+        holdUntilCrawlEnd: true,
+        force: false,
+        noDiscovery: false,
+        esbuildOptions: { preserveSymlinks: false, jsx: 'automatic' }
+      },
+      dev: {
+        warmup: [],
+        sourcemap: { js: true },
+        sourcemapIgnoreList: [Function: isInNodeModules$1],
+        preTransformRequests: true,
+        createEnvironment: [Function: defaultCreateClientDevEnvironment],
+        recoverable: true,
+        moduleRunnerTransform: false
+      },
+      build: {
+        target: [ 'es2020', 'edge88', 'firefox78', 'chrome87', 'safari14' ],
+        polyfillModulePreload: true,
+        modulePreload: { polyfill: true },
+        outDir: 'dist',
+        assetsDir: 'assets',
+        assetsInlineLimit: 4096,
+        sourcemap: false,
+        terserOptions: {},
+        rollupOptions: { onwarn: [Function: onwarn] },
+        commonjsOptions: { include: [ /node_modules/ ], extensions: [ '.js', '.cjs' ] },
+        dynamicImportVarsOptions: { warnOnError: true, exclude: [ /node_modules/ ] },
+        write: true,
+        emptyOutDir: null,
+        copyPublicDir: true,
+        manifest: false,
+        lib: false,
+        ssrManifest: false,
+        ssrEmitAssets: false,
+        reportCompressedSize: true,
+        chunkSizeWarningLimit: 500,
+        watch: null,
+        cssCodeSplit: true,
+        minify: 'esbuild',
+        ssr: false,
+        emitAssets: true,
+        createEnvironment: [Function: createEnvironment],
+        cssTarget: [ 'es2020', 'edge88', 'firefox78', 'chrome87', 'safari14' ],
+        cssMinify: true
+      }
+    }
+  },
+  configFile: '/app/applet/vite.config.ts',
+  configFileDependencies: [ '/app/applet/vite.config.ts' ],
+  inlineConfig: {
+    root: undefined,
+    base: undefined,
+    mode: undefined,
+    configFile: undefined,
+    configLoader: undefined,
+    logLevel: undefined,
+    clearScreen: undefined,
+    build: {}
+  },
+  root: '/app/applet',
+  base: '/',
+  decodedBase: '/',
+  rawBase: '/',
+  publicDir: '/app/applet/public',
+  cacheDir: '/app/applet/node_modules/.vite',
+  command: 'build',
+  mode: 'production',
+  isWorker: false,
+  mainConfig: null,
+  bundleChain: [],
+  isProduction: true,
+  css: {
+    transformer: 'postcss',
+    preprocessorMaxWorkers: 0,
+    devSourcemap: false
+  },
+  json: { namedExports: true, stringify: 'auto' },
+  builder: undefined,
+  preview: {
+    port: 4173,
+    strictPort: false,
+    host: undefined,
+    allowedHosts: [],
+    https: undefined,
+    open: false,
+    proxy: undefined,
+    cors: {
+      origin: /^https?:\/\/(?:(?:[^:]+\.)?localhost|127\.0\.0\.1|\[::1\])(?::\d+)?$/
+    },
+    headers: {}
+  },
+  envDir: '/app/applet',
+  env: { BASE_URL: '/', MODE: 'production', DEV: false, PROD: true },
+  assetsInclude: [Function: assetsInclude],
+  logger: {
+    hasWarned: false,
+    info: [Function: info],
+    warn: [Function: warn],
+    warnOnce: [Function: warnOnce],
+    error: [Function: error],
+    clearScreen: [Function: clearScreen],
+    hasErrorLogged: [Function: hasErrorLogged]
+  },
+  packageCache: Map(1) {
+    'fnpd_/app/applet' => {
+      dir: '/app/applet',
+      data: {
+        name: 'react-example',
+        private: true,
+        version: '0.0.0',
+        type: 'module',
+        scripts: {
+          dev: 'vite --port 3000 --host 0.0.0.0',
+          start: 'node server.ts',
+          build: 'vite build',
+          preview: 'vite preview',
+          clean: 'rm -rf dist',
+          lint: 'tsc --noEmit'
+        },
+        dependencies: {
+          '@google/genai': '^1.29.0',
+          '@tailwindcss/vite': '^4.1.14',
+          '@vitejs/plugin-react': '^5.0.4',
+          algebrite: '^1.4.0',
+          clsx: '^2.1.1',
+          'decimal.js': '^10.6.0',
+          dotenv: '^17.2.3',
+          express: '^4.21.2',
+          'fraction.js': '^5.3.4',
+          katex: '^0.16.45',
+          leaflet: '^1.9.4',
+          'lucide-react': '^0.546.0',
+          mathjs: '^15.2.0',
+          motion: '^12.38.0',
+          nerdamer: '^1.1.13',
+          papaparse: '^5.5.3',
+          'plotly.js': '^3.5.0',
+          proj4: '^2.20.8',
+          pyodide: '^0.29.3',
+          react: '^19.0.0',
+          'react-dom': '^19.0.0',
+          'react-katex': '^3.1.0',
+          'react-leaflet': '^5.0.0',
+          'react-plotly.js': '^2.6.0',
+          'simple-statistics': '^7.8.9',
+          'tailwind-merge': '^3.5.0',
+          vite: '^6.2.0'
+        },
+        devDependencies: {
+          '@types/express': '^4.17.21',
+          '@types/katex': '^0.16.8',
+          '@types/leaflet': '^1.9.21',
+          '@types/mathjs': '^9.4.1',
+          '@types/node': '^22.14.0',
+          '@types/papaparse': '^5.5.2',
+          '@types/proj4': '^2.5.6',
+          '@types/react-katex': '^3.0.4',
+          autoprefixer: '^10.4.21',
+          tailwindcss: '^4.1.14',
+          tsx: '^4.21.0',
+          typescript: '~5.8.2',
+          vite: '^6.2.0'
+        }
+      },
+      hasSideEffects: [Function: hasSideEffects],
+      setResolvedCache: [Function: setResolvedCache],
+      getResolvedCache: [Function: getResolvedCache]
+    },
+    set: [Function (anonymous)]
+  },
+  worker: { format: 'iife', plugins: '() => plugins', rollupOptions: {} },
+  appType: 'spa',
+  experimental: { importGlobRestoreExtension: false, hmrPartialAccept: false },
+  future: undefined,
+  ssr: {
+    target: 'node',
+    optimizeDeps: { esbuildOptions: { preserveSymlinks: false } },
+    resolve: { conditions: undefined, externalConditions: undefined }
+  },
+  dev: {
+    warmup: [],
+    sourcemap: { js: true },
+    sourcemapIgnoreList: [Function: isInNodeModules$1],
+    preTransformRequests: false,
+    createEnvironment: [Function: defaultCreateDevEnvironment],
+    recoverable: false,
+    moduleRunnerTransform: false
+  },
+  webSocketToken: 'Nc6Eq4WldPCB',
+  getSortedPlugins: [Function: getSortedPlugins],
+  getSortedPluginHooks: [Function: getSortedPluginHooks],
+  createResolver: [Function: createResolver],
+  fsDenyGlob: [Function: arrayMatcher],
+  safeModulePaths: Set(0) {},
+  additionalAllowedHosts: [],
+  [Symbol(vite:resolved-config)]: true
+}
+vite v6.4.1 building for production...
+transforming...
+2026-06-24T09:16:05.570Z vite:resolve 0.28ms tailwindcss -> null
+2026-06-24T09:16:05.571Z vite:resolve 0.34ms ./beautifulUI.css -> null
+2026-06-24T09:16:06.792Z vite:resolve 4.18ms fonts/KaTeX_AMS-Regular.woff2 -> /app/applet/node_modules/katex/dist/fonts/KaTeX_AMS-Regular.woff2
+2026-06-24T09:16:06.792Z vite:resolve 4.28ms fonts/KaTeX_Caligraphic-Bold.woff2 -> /app/applet/node_modules/katex/dist/fonts/KaTeX_Caligraphic-Bold.woff2
+2026-06-24T09:16:06.792Z vite:resolve 4.31ms fonts/KaTeX_Caligraphic-Regular.woff2 -> /app/applet/node_modules/katex/dist/fonts/KaTeX_Caligraphic-Regular.woff2
+2026-06-24T09:16:06.792Z vite:resolve 4.38ms fonts/KaTeX_Fraktur-Bold.woff2 -> /app/applet/node_modules/katex/dist/fonts/KaTeX_Fraktur-Bold.woff2
+2026-06-24T09:16:06.792Z vite:resolve 4.40ms fonts/KaTeX_Fraktur-Regular.woff2 -> /app/applet/node_modules/katex/dist/fonts/KaTeX_Fraktur-Regular.woff2
+2026-06-24T09:16:06.792Z vite:resolve 4.42ms fonts/KaTeX_Main-Bold.woff2 -> /app/applet/node_modules/katex/dist/fonts/KaTeX_Main-Bold.woff2
+2026-06-24T09:16:06.792Z vite:resolve 4.35ms fonts/KaTeX_Main-BoldItalic.woff2 -> /app/applet/node_modules/katex/dist/fonts/KaTeX_Main-BoldItalic.woff2
+2026-06-24T09:16:06.793Z vite:resolve 4.34ms fonts/KaTeX_Main-Italic.woff2 -> /app/applet/node_modules/katex/dist/fonts/KaTeX_Main-Italic.woff2
+2026-06-24T09:16:06.793Z vite:resolve 4.35ms fonts/KaTeX_Main-Regular.woff2 -> /app/applet/node_modules/katex/dist/fonts/KaTeX_Main-Regular.woff2
+2026-06-24T09:16:06.793Z vite:resolve 4.38ms fonts/KaTeX_Math-BoldItalic.woff2 -> /app/applet/node_modules/katex/dist/fonts/KaTeX_Math-BoldItalic.woff2
+2026-06-24T09:16:06.793Z vite:resolve 4.39ms fonts/KaTeX_Math-Italic.woff2 -> /app/applet/node_modules/katex/dist/fonts/KaTeX_Math-Italic.woff2
+2026-06-24T09:16:06.793Z vite:resolve 4.39ms fonts/KaTeX_SansSerif-Bold.woff2 -> /app/applet/node_modules/katex/dist/fonts/KaTeX_SansSerif-Bold.woff2
+2026-06-24T09:16:06.793Z vite:resolve 4.40ms fonts/KaTeX_SansSerif-Italic.woff2 -> /app/applet/node_modules/katex/dist/fonts/KaTeX_SansSerif-Italic.woff2
+2026-06-24T09:16:06.793Z vite:resolve 4.42ms fonts/KaTeX_SansSerif-Regular.woff2 -> /app/applet/node_modules/katex/dist/fonts/KaTeX_SansSerif-Regular.woff2
+2026-06-24T09:16:06.793Z vite:resolve 4.44ms fonts/KaTeX_Script-Regular.woff2 -> /app/applet/node_modules/katex/dist/fonts/KaTeX_Script-Regular.woff2
+2026-06-24T09:16:06.793Z vite:resolve 4.46ms fonts/KaTeX_Size1-Regular.woff2 -> /app/applet/node_modules/katex/dist/fonts/KaTeX_Size1-Regular.woff2
+2026-06-24T09:16:06.793Z vite:resolve 4.47ms fonts/KaTeX_Size2-Regular.woff2 -> /app/applet/node_modules/katex/dist/fonts/KaTeX_Size2-Regular.woff2
+2026-06-24T09:16:06.793Z vite:resolve 4.48ms fonts/KaTeX_Size3-Regular.woff2 -> /app/applet/node_modules/katex/dist/fonts/KaTeX_Size3-Regular.woff2
+2026-06-24T09:16:06.793Z vite:resolve 4.49ms fonts/KaTeX_Size4-Regular.woff2 -> /app/applet/node_modules/katex/dist/fonts/KaTeX_Size4-Regular.woff2
+2026-06-24T09:16:06.793Z vite:resolve 4.50ms fonts/KaTeX_Typewriter-Regular.woff2 -> /app/applet/node_modules/katex/dist/fonts/KaTeX_Typewriter-Regular.woff2
+2026-06-24T09:16:07.442Z vite:resolve 0.37ms fonts/KaTeX_AMS-Regular.woff -> /app/applet/node_modules/katex/dist/fonts/KaTeX_AMS-Regular.woff
+2026-06-24T09:16:07.443Z vite:resolve 0.30ms fonts/KaTeX_Caligraphic-Regular.woff -> /app/applet/node_modules/katex/dist/fonts/KaTeX_Caligraphic-Regular.woff
+2026-06-24T09:16:07.479Z vite:resolve 36.09ms fonts/KaTeX_Caligraphic-Bold.woff -> /app/applet/node_modules/katex/dist/fonts/KaTeX_Caligraphic-Bold.woff
+2026-06-24T09:16:07.480Z vite:resolve 0.28ms fonts/KaTeX_Fraktur-Regular.woff -> /app/applet/node_modules/katex/dist/fonts/KaTeX_Fraktur-Regular.woff
+2026-06-24T09:16:07.480Z vite:resolve 0.20ms fonts/KaTeX_Main-Bold.woff -> /app/applet/node_modules/katex/dist/fonts/KaTeX_Main-Bold.woff
+2026-06-24T09:16:07.481Z vite:resolve 0.24ms fonts/KaTeX_Math-BoldItalic.woff -> /app/applet/node_modules/katex/dist/fonts/KaTeX_Math-BoldItalic.woff
+2026-06-24T09:16:07.481Z vite:resolve 0.28ms fonts/KaTeX_Fraktur-Bold.woff -> /app/applet/node_modules/katex/dist/fonts/KaTeX_Fraktur-Bold.woff
+2026-06-24T09:16:07.482Z vite:resolve 0.42ms fonts/KaTeX_Main-Regular.woff -> /app/applet/node_modules/katex/dist/fonts/KaTeX_Main-Regular.woff
+2026-06-24T09:16:07.483Z vite:resolve 0.26ms fonts/KaTeX_Math-Italic.woff -> /app/applet/node_modules/katex/dist/fonts/KaTeX_Math-Italic.woff
+2026-06-24T09:16:07.484Z vite:resolve 0.28ms fonts/KaTeX_SansSerif-Italic.woff -> /app/applet/node_modules/katex/dist/fonts/KaTeX_SansSerif-Italic.woff
+2026-06-24T09:16:07.484Z vite:resolve 0.19ms fonts/KaTeX_Script-Regular.woff -> /app/applet/node_modules/katex/dist/fonts/KaTeX_Script-Regular.woff
+2026-06-24T09:16:07.485Z vite:resolve 0.41ms fonts/KaTeX_SansSerif-Regular.woff -> /app/applet/node_modules/katex/dist/fonts/KaTeX_SansSerif-Regular.woff
+2026-06-24T09:16:07.485Z vite:resolve 0.44ms fonts/KaTeX_Size2-Regular.woff -> /app/applet/node_modules/katex/dist/fonts/KaTeX_Size2-Regular.woff
+2026-06-24T09:16:07.486Z vite:resolve 0.36ms fonts/KaTeX_Size1-Regular.woff -> /app/applet/node_modules/katex/dist/fonts/KaTeX_Size1-Regular.woff
+2026-06-24T09:16:07.487Z vite:resolve 0.28ms fonts/KaTeX_Size3-Regular.woff -> /app/applet/node_modules/katex/dist/fonts/KaTeX_Size3-Regular.woff
+2026-06-24T09:16:07.487Z vite:resolve 0.26ms fonts/KaTeX_Size4-Regular.woff -> /app/applet/node_modules/katex/dist/fonts/KaTeX_Size4-Regular.woff
+2026-06-24T09:16:07.487Z vite:resolve 0.17ms fonts/KaTeX_Typewriter-Regular.woff -> /app/applet/node_modules/katex/dist/fonts/KaTeX_Typewriter-Regular.woff
+2026-06-24T09:16:07.489Z vite:resolve 0.20ms fonts/KaTeX_SansSerif-Bold.woff -> /app/applet/node_modules/katex/dist/fonts/KaTeX_SansSerif-Bold.woff
+2026-06-24T09:16:07.489Z vite:resolve 0.32ms fonts/KaTeX_Main-Italic.woff -> /app/applet/node_modules/katex/dist/fonts/KaTeX_Main-Italic.woff
+2026-06-24T09:16:07.489Z vite:resolve 0.16ms fonts/KaTeX_Main-BoldItalic.woff -> /app/applet/node_modules/katex/dist/fonts/KaTeX_Main-BoldItalic.woff
+2026-06-24T09:16:09.099Z vite:resolve 0.66ms fonts/KaTeX_AMS-Regular.ttf -> /app/applet/node_modules/katex/dist/fonts/KaTeX_AMS-Regular.ttf
+2026-06-24T09:16:09.100Z vite:resolve 0.41ms fonts/KaTeX_Caligraphic-Regular.ttf -> /app/applet/node_modules/katex/dist/fonts/KaTeX_Caligraphic-Regular.ttf
+2026-06-24T09:16:09.101Z vite:resolve 0.69ms fonts/KaTeX_Caligraphic-Bold.ttf -> /app/applet/node_modules/katex/dist/fonts/KaTeX_Caligraphic-Bold.ttf
+2026-06-24T09:16:09.102Z vite:resolve 0.40ms fonts/KaTeX_Fraktur-Regular.ttf -> /app/applet/node_modules/katex/dist/fonts/KaTeX_Fraktur-Regular.ttf
+2026-06-24T09:16:09.102Z vite:resolve 0.20ms fonts/KaTeX_Main-Bold.ttf -> /app/applet/node_modules/katex/dist/fonts/KaTeX_Main-Bold.ttf
+2026-06-24T09:16:09.102Z vite:resolve 0.30ms fonts/KaTeX_Math-BoldItalic.ttf -> /app/applet/node_modules/katex/dist/fonts/KaTeX_Math-BoldItalic.ttf
+2026-06-24T09:16:09.103Z vite:resolve 0.25ms fonts/KaTeX_Fraktur-Bold.ttf -> /app/applet/node_modules/katex/dist/fonts/KaTeX_Fraktur-Bold.ttf
+2026-06-24T09:16:09.104Z vite:resolve 0.22ms fonts/KaTeX_Main-Regular.ttf -> /app/applet/node_modules/katex/dist/fonts/KaTeX_Main-Regular.ttf
+2026-06-24T09:16:09.104Z vite:resolve 0.16ms fonts/KaTeX_Math-Italic.ttf -> /app/applet/node_modules/katex/dist/fonts/KaTeX_Math-Italic.ttf
+2026-06-24T09:16:09.104Z vite:resolve 0.17ms fonts/KaTeX_SansSerif-Italic.ttf -> /app/applet/node_modules/katex/dist/fonts/KaTeX_SansSerif-Italic.ttf
+2026-06-24T09:16:09.105Z vite:resolve 0.16ms fonts/KaTeX_Script-Regular.ttf -> /app/applet/node_modules/katex/dist/fonts/KaTeX_Script-Regular.ttf
+2026-06-24T09:16:09.105Z vite:resolve 0.15ms fonts/KaTeX_SansSerif-Regular.ttf -> /app/applet/node_modules/katex/dist/fonts/KaTeX_SansSerif-Regular.ttf
+2026-06-24T09:16:09.106Z vite:resolve 0.48ms fonts/KaTeX_Size2-Regular.ttf -> /app/applet/node_modules/katex/dist/fonts/KaTeX_Size2-Regular.ttf
+2026-06-24T09:16:09.106Z vite:resolve 0.17ms fonts/KaTeX_Size1-Regular.ttf -> /app/applet/node_modules/katex/dist/fonts/KaTeX_Size1-Regular.ttf
+2026-06-24T09:16:09.106Z vite:resolve 0.15ms fonts/KaTeX_Size3-Regular.ttf -> /app/applet/node_modules/katex/dist/fonts/KaTeX_Size3-Regular.ttf
+2026-06-24T09:16:09.106Z vite:resolve 0.16ms fonts/KaTeX_Size4-Regular.ttf -> /app/applet/node_modules/katex/dist/fonts/KaTeX_Size4-Regular.ttf
+2026-06-24T09:16:09.107Z vite:resolve 0.22ms fonts/KaTeX_Typewriter-Regular.ttf -> /app/applet/node_modules/katex/dist/fonts/KaTeX_Typewriter-Regular.ttf
+2026-06-24T09:16:09.108Z vite:resolve 0.25ms fonts/KaTeX_SansSerif-Bold.ttf -> /app/applet/node_modules/katex/dist/fonts/KaTeX_SansSerif-Bold.ttf
+2026-06-24T09:16:09.109Z vite:resolve 0.16ms fonts/KaTeX_Main-Italic.ttf -> /app/applet/node_modules/katex/dist/fonts/KaTeX_Main-Italic.ttf
+2026-06-24T09:16:09.109Z vite:resolve 0.17ms fonts/KaTeX_Main-BoldItalic.ttf -> /app/applet/node_modules/katex/dist/fonts/KaTeX_Main-BoldItalic.ttf
+2026-06-24T09:16:11.327Z vite:resolve 1.52ms images/layers.png -> /app/applet/node_modules/leaflet/dist/images/layers.png
+2026-06-24T09:16:11.327Z vite:resolve 1.65ms images/layers-2x.png -> /app/applet/node_modules/leaflet/dist/images/layers-2x.png
+2026-06-24T09:16:11.327Z vite:resolve 1.70ms images/marker-icon.png -> /app/applet/node_modules/leaflet/dist/images/marker-icon.png
+
+Terminated by tracer after 20 seconds

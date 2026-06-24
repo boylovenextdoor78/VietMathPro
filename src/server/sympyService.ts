@@ -1013,13 +1013,16 @@ def run_precision_geometry():
             # 1. Finds all critical points using derivative's crossings
             crit_pts = [x_min_mp]
             for i in range(steps):
-                da = d_val_eval(x_points[i])
-                db = d_val_eval(x_points[i+1])
-                if da is not None and db is not None and not mpmath.isnan(da) and not mpmath.isnan(db):
-                    if da * db <= 0:
-                        rx = h_bisect(d_val_eval, x_points[i], x_points[i+1])
-                        if rx is not None:
-                            crit_pts.append(rx)
+                try:
+                    da = d_val_eval(x_points[i])
+                    db = d_val_eval(x_points[i+1])
+                    if da is not None and db is not None and not mpmath.isnan(da) and not mpmath.isnan(db):
+                        if da * db <= 0:
+                            rx = h_bisect(d_val_eval, x_points[i], x_points[i+1])
+                            if rx is not None:
+                                crit_pts.append(rx)
+                except Exception:
+                    pass
             crit_pts.append(x_max_mp)
             
             # Filter and sort critical bounds
@@ -1033,19 +1036,22 @@ def run_precision_geometry():
             for i in range(len(unique_bounds)-1):
                 a = unique_bounds[i]
                 b = unique_bounds[i+1]
-                va = val_eval(a)
-                vb = val_eval(b)
-                if va is not None and vb is not None and not mpmath.isnan(va) and not mpmath.isnan(vb):
-                    if va * vb <= 0:
-                        rx = h_bisect(val_eval, a, b)
-                        if rx is not None:
-                            roots.append(rx)
-                    else:
-                        # Check touch points (val_eval ~ 0 near critical point bounded here)
-                        mid = (a + b) / 2
-                        vm = val_eval(mid)
-                        if vm is not None and abs(vm) < 1e-12:
-                            roots.append(mid)
+                try:
+                    va = val_eval(a)
+                    vb = val_eval(b)
+                    if va is not None and vb is not None and not mpmath.isnan(va) and not mpmath.isnan(vb):
+                        if va * vb <= 0:
+                            rx = h_bisect(val_eval, a, b)
+                            if rx is not None:
+                                roots.append(rx)
+                        else:
+                            # Check touch points (val_eval ~ 0 near critical point bounded here)
+                            mid = (a + b) / 2
+                            vm = val_eval(mid)
+                            if vm is not None and abs(vm) < 1e-12:
+                                roots.append(mid)
+                except Exception:
+                    pass
             
             # Deduplicate roots
             unique_roots = []
@@ -1119,28 +1125,50 @@ def run_precision_geometry():
         # 2. Intersections of f(x) = g(x)
         for idx1 in range(len(funcs_data)):
             for idx2 in range(idx1 + 1, len(funcs_data)):
-                d1 = funcs_data[idx1]
-                d2 = funcs_data[idx2]
-                
-                # Difference evaluator capturing d1 and d2 correctly using default arguments to prevent late-binding issues
-                diff_eval = lambda pt, f1=d1["f_eval"], f2=d2["f_eval"]: (f1(pt) - f2(pt)) if (f1(pt) is not None and f2(pt) is not None) else None
-                diff_deriv = lambda pt, df1=d1["df_eval"], df2=d2["df_eval"]: (df1(pt) - df2(pt)) if (df1(pt) is not None and df2(pt) is not None) else None
-                
-                isects_found = find_roots_calculus_based(diff_eval, diff_deriv)
-                for rx in isects_found:
-                    yr = d1["f_eval"](rx)
-                    if yr is not None:
-                        # Completely removed visible y range filtering so intersections are never missing
-                        results.append({
-                            "id": f"isect-{d1['str']}-{d2['str']}-{format_to_25(rx)}",
-                            "type": "intersection",
-                            "label": f"Giao điểm {d1['str']} ∩ {d2['str']}",
-                            "expressionName": f"{d1['str']} & {d2['str']}",
-                            "x": format_to_25(rx),
-                            "y": format_to_25(yr),
-                            "xNum": float(rx),
-                            "yNum": float(yr)
-                        })
+                try:
+                    d1 = funcs_data[idx1]
+                    d2 = funcs_data[idx2]
+                    
+                    def diff_eval(pt, f1=d1["f_eval"], f2=d2["f_eval"]):
+                        try:
+                            v1 = f1(pt)
+                            v2 = f2(pt)
+                            if v1 is not None and v2 is not None:
+                                return v1 - v2
+                        except Exception:
+                            pass
+                        return None
+                        
+                    def diff_deriv(pt, df1=d1["df_eval"], df2=d2["df_eval"]):
+                        try:
+                            v1 = df1(pt)
+                            v2 = df2(pt)
+                            if v1 is not None and v2 is not None:
+                                return v1 - v2
+                        except Exception:
+                            pass
+                        return None
+                    
+                    isects_found = find_roots_calculus_based(diff_eval, diff_deriv)
+                    for rx in isects_found:
+                        try:
+                            yr = d1["f_eval"](rx)
+                            if yr is not None:
+                                # Completely removed visible y range filtering so intersections are never missing
+                                results.append({
+                                    "id": f"isect-{d1['str']}-{d2['str']}-{format_to_25(rx)}",
+                                    "type": "intersection",
+                                    "label": f"Giao điểm {d1['str']} ∩ {d2['str']}",
+                                    "expressionName": f"{d1['str']} & {d2['str']}",
+                                    "x": format_to_25(rx),
+                                    "y": format_to_25(yr),
+                                    "xNum": float(rx),
+                                    "yNum": float(yr)
+                                })
+                        except Exception:
+                            pass
+                except Exception:
+                    pass
 
         # Deduplicate overlapping points
         unique_list = []
