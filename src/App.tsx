@@ -7552,6 +7552,7 @@ function Mode20() {
   
   const [resolution, setResolution] = useState(30);
   const [range, setRange] = useState(5);
+  const [squareGridMode, setSquareGridMode] = useState(true);
 
   const [range2d, setRange2d] = useState({ x: [-5, 5], y: [-5, 5] });
   const [range3d, setRange3d] = useState({ x: [-5, 5], y: [-5, 5], z: [-5, 5] });
@@ -7561,6 +7562,25 @@ function Mode20() {
   const adjustedRange2d = useMemo(() => {
     return getPerfectSquareRange(range2d, dims2d.width, dims2d.height);
   }, [range2d, dims2d]);
+
+  const squareGridTick = useMemo(() => {
+    const dy = adjustedRange2d.y[1] - adjustedRange2d.y[0];
+    if (dy <= 0) return undefined;
+    const approx_S = dy / 10;
+    const power = Math.pow(10, Math.floor(Math.log10(approx_S)));
+    const ratio = approx_S / power;
+    let S = power;
+    if (ratio < 1.5) {
+      S = 1 * power;
+    } else if (ratio < 3.5) {
+      S = 2 * power;
+    } else if (ratio < 7.5) {
+      S = 5 * power;
+    } else {
+      S = 10 * power;
+    }
+    return S;
+  }, [adjustedRange2d]);
 
   const { items: precItems, loading: precLoading, error: precError } = usePrecisionAnalysis(exprs2d, adjustedRange2d);
 
@@ -8130,6 +8150,18 @@ function Mode20() {
                 </div>
                 <input type="range" min="10" max="60" step="1" value={resolution} onChange={e => setResolution(parseInt(e.target.value))} className="w-full accent-rose-700" />
               </div>
+
+              {activeTab === '2d' && (
+                <label className="flex items-center gap-2 cursor-pointer pt-2 group">
+                  <input
+                    type="checkbox"
+                    checked={squareGridMode}
+                    onChange={e => setSquareGridMode(e.target.checked)}
+                    className="accent-rose-700 w-3.5 h-3.5 rounded border-[#141414] focus:ring-rose-700"
+                  />
+                  <span className="text-[10px] font-mono uppercase opacity-70 group-hover:opacity-100 transition-opacity">Lưới ô vuông (GeoGebra)</span>
+                </label>
+              )}
               
               {activeTab === '4d' && visType4d === 'scalar' && (
                 <div className="space-y-2">
@@ -8279,8 +8311,8 @@ function Mode20() {
                   margin: { l: 40, r: 20, b: 40, t: 20 },
                   paper_bgcolor: 'rgba(0,0,0,0)',
                   plot_bgcolor: 'rgba(0,0,0,0)',
-                  xaxis: { title: 'X', gridcolor: '#ccc', gridwidth: 1, zerolinecolor: '#141414', range: adjustedRange2d.x, griddash: 'dot', dtick: (adjustedRange2d.x[1] - adjustedRange2d.x[0]) / 10 },
-                  yaxis: { title: 'Y', gridcolor: '#ccc', gridwidth: 1, zerolinecolor: '#141414', range: adjustedRange2d.y, scaleanchor: 'x', scaleratio: 1, griddash: 'dot', dtick: (adjustedRange2d.y[1] - adjustedRange2d.y[0]) / 10 },
+                  xaxis: { title: 'X', gridcolor: '#ccc', gridwidth: 1, zerolinecolor: '#141414', range: adjustedRange2d.x, griddash: 'dot', dtick: squareGridMode ? squareGridTick : (adjustedRange2d.x[1] - adjustedRange2d.x[0]) / 10 },
+                  yaxis: { title: 'Y', gridcolor: '#ccc', gridwidth: 1, zerolinecolor: '#141414', range: adjustedRange2d.y, scaleanchor: 'x', scaleratio: 1, griddash: 'dot', dtick: squareGridMode ? squareGridTick : (adjustedRange2d.y[1] - adjustedRange2d.y[0]) / 10 },
                   dragmode: 'pan',
                   showlegend: true,
                   legend: { x: 0, y: 1, bgcolor: 'rgba(255,255,255,0.8)' }

@@ -211,27 +211,29 @@ export function MathSymbInputPanel({ onInsert }: MathSymbInputPanelProps) {
         {/* MIXED NUMBER */}
         {activeTab === 'mixed' && (
           <div className="flex flex-col items-center justify-center p-3 py-4 bg-gray-50/50 border border-dashed border-gray-300 rounded gap-4">
-            <div className="inline-flex items-center justify-center gap-2">
+            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: '16px' }}>
               {/* Whole */}
-              <div className="flex flex-col items-center">
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <span className="text-[10px] font-mono opacity-40 uppercase mb-0.5">Phần nguyên</span>
                 <input
                   type="text"
                   value={mixedWhole}
                   onChange={e => setMixedWhole(e.target.value)}
                   placeholder="2"
-                  className="w-14 text-center p-1.5 border border-[#141414] font-mono text-base font-bold focus:ring-1 focus:ring-indigo-500 focus:outline-none rounded"
+                  style={{ width: '64px', textAlign: 'center', padding: '6px' }}
+                  className="border border-[#141414] font-mono text-base font-bold focus:ring-1 focus:ring-indigo-500 focus:outline-none rounded bg-white"
                 />
               </div>
 
               {/* Fraction Numerator over Denominator */}
-              <div className="flex flex-col items-center justify-center gap-1">
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
                 <input
                   type="text"
                   value={mixedNum}
                   onChange={e => setMixedNum(e.target.value)}
                   placeholder=" tử "
-                  className="w-14 text-center p-1 border border-[#141414] font-mono text-xs focus:ring-1 focus:ring-indigo-500 focus:outline-none rounded"
+                  style={{ width: '56px', textAlign: 'center', padding: '4px' }}
+                  className="border border-[#141414] font-mono text-xs focus:ring-1 focus:ring-indigo-500 focus:outline-none rounded bg-white"
                 />
                 <div className="w-16 border-t-2 border-[#141414]" />
                 <input
@@ -239,7 +241,8 @@ export function MathSymbInputPanel({ onInsert }: MathSymbInputPanelProps) {
                   value={mixedDen}
                   onChange={e => setMixedDen(e.target.value)}
                   placeholder=" mẫu "
-                  className="w-14 text-center p-1 border border-[#141414] font-mono text-xs focus:ring-1 focus:ring-indigo-500 focus:outline-none rounded"
+                  style={{ width: '56px', textAlign: 'center', padding: '4px' }}
+                  className="border border-[#141414] font-mono text-xs focus:ring-1 focus:ring-indigo-500 focus:outline-none rounded bg-white"
                 />
               </div>
             </div>
@@ -429,19 +432,20 @@ export function MathSymbInputPanel({ onInsert }: MathSymbInputPanelProps) {
         {/* ABSOLUTE VALUE */}
         {activeTab === 'abs' && (
           <div className="flex flex-col items-center justify-center p-3 py-4 bg-gray-50/50 border border-dashed border-gray-300 rounded gap-4">
-            <div className="inline-flex items-center justify-center gap-1.5">
-              <span className="text-3xl font-light text-gray-400 select-none leading-none">|</span>
-              <div className="flex flex-col items-center">
-                <span className="text-[9px] font-mono opacity-40 uppercase mb-0.5">Biểu thức (Expr)</span>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+              <span className="text-[10px] font-mono opacity-40 uppercase tracking-wider">Biểu thức (Expr)</span>
+              <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                <span className="text-4xl font-extralight text-[#141414] select-none leading-none">|</span>
                 <input
                   type="text"
                   value={absExpr}
                   onChange={e => setAbsExpr(e.target.value)}
                   placeholder="biểu thức"
-                  className="w-44 text-center p-1 border border-[#141414] font-mono text-sm focus:ring-1 focus:ring-indigo-500 focus:outline-none rounded"
+                  style={{ width: '180px', textAlign: 'center', padding: '6px' }}
+                  className="border border-[#141414] font-mono text-sm focus:ring-1 focus:ring-indigo-500 focus:outline-none rounded bg-white"
                 />
+                <span className="text-4xl font-extralight text-[#141414] select-none leading-none">|</span>
               </div>
-              <span className="text-3xl font-light text-gray-400 select-none leading-none">|</span>
             </div>
 
             {/* LaTeX Live Formula Rendering */}
@@ -462,57 +466,65 @@ export function MathSymbInputPanel({ onInsert }: MathSymbInputPanelProps) {
         {activeTab === 'derivative' && (
           <div className="flex flex-col p-3 bg-gray-50/50 border border-[#141414]/10 rounded gap-4">
             {/* Structural visual layout */}
-            <div className="flex flex-col md:flex-row items-center gap-4 justify-center bg-white p-3 border border-[#141414]/10 rounded">
+            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: '16px', flexWrap: 'wrap' }} className="bg-white p-3 border border-[#141414]/10 rounded">
               
-              {/* Operator */}
-              <div className="inline-flex items-center gap-1">
-                <div className="flex flex-col items-center">
-                  <div className="flex items-center text-xs font-mono">
-                    d{derivOrder > 1 && <sup className="text-[9px] scale-90">{derivOrder}</sup>}
+              {/* Derivative mathematical group */}
+              <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '8px', flexWrap: 'nowrap' }}>
+                
+                {/* d^n/dx^n fraction operator */}
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginRight: '4px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center' }} className="text-sm font-bold font-mono leading-none">
+                    d{derivOrder > 1 && <sup style={{ fontSize: '10px' }}>{derivOrder}</sup>}
                   </div>
-                  <div className="w-10 border-t border-[#141414]" />
-                  <div className="flex items-center text-xs font-mono">
+                  <div style={{ width: '32px', borderTop: '2px solid #141414', margin: '3px 0' }} />
+                  <div style={{ display: 'flex', alignItems: 'center' }} className="text-sm font-bold font-mono leading-none">
                     d
                     <input
                       type="text"
                       value={derivVar}
                       onChange={e => setDerivVar(e.target.value)}
                       placeholder="x"
-                      className="w-6 text-center text-xs font-mono p-0 border border-transparent font-bold focus:border-[#141414] focus:outline-none bg-yellow-50/50"
+                      style={{ width: '20px', textAlign: 'center', padding: '0', fontWeight: 'bold' }}
+                      className="border border-transparent focus:border-[#141414] focus:outline-none bg-yellow-50/50"
                     />
-                    {derivOrder > 1 && <sup className="text-[9px] scale-90">{derivOrder}</sup>}
+                    {derivOrder > 1 && <sup style={{ fontSize: '10px' }}>{derivOrder}</sup>}
                   </div>
                 </div>
 
-                <span className="text-2xl font-light text-gray-400 ml-1 select-none">(</span>
+                {/* Left Parenthesis */}
+                <span className="text-4xl font-extralight text-[#141414] select-none leading-none -mr-1">(</span>
                 
                 {/* Function f(x) */}
-                <div className="flex flex-col items-center">
-                  <span className="text-[8px] font-mono opacity-30 uppercase">HÀM SỐ F(X)</span>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  <span className="text-[8px] font-mono opacity-30 uppercase tracking-wider mb-0.5">HÀM SỐ F(X)</span>
                   <input
                     type="text"
                     value={derivFunc}
                     onChange={e => setDerivFunc(e.target.value)}
                     placeholder="sin(x)*e^x"
-                    className="w-36 text-center p-1 border border-[#141414] font-mono text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 rounded font-bold"
+                    style={{ width: '150px', textAlign: 'center', padding: '6px' }}
+                    className="border border-[#141414] font-mono text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 rounded font-bold bg-white"
                   />
                 </div>
 
-                <span className="text-2xl font-light text-gray-400 select-none">)</span>
+                {/* Right Parenthesis */}
+                <span className="text-4xl font-extralight text-[#141414] select-none leading-none -ml-1">)</span>
 
                 {/* Point evaluation line */}
-                <span className="text-2xl font-light text-gray-400 select-none ml-1">|</span>
+                <span className="text-4xl font-extralight text-[#141414]/30 select-none leading-none mx-1">|</span>
 
-                <div className="flex flex-col items-center">
-                  <span className="text-[8px] font-mono opacity-30 uppercase">TẠI ĐIỂM (TÙY CHỌN)</span>
-                  <div className="flex items-center text-xs font-mono gap-0.5">
+                {/* Evaluation point */}
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  <span className="text-[8px] font-mono opacity-30 uppercase tracking-wider mb-0.5">TẠI ĐIỂM (TÙY CHỌN)</span>
+                  <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '4px' }} className="text-xs font-mono">
                     <span>{derivVar || 'x'} =</span>
                     <input
                       type="text"
                       value={derivPoint}
                       onChange={e => setDerivPoint(e.target.value)}
                       placeholder="bỏ trống"
-                      className="w-12 text-center p-0.5 border border-[#141414] font-mono text-xs focus:outline-none focus:ring-1 focus:ring-indigo-500 rounded"
+                      style={{ width: '64px', textAlign: 'center', padding: '4px' }}
+                      className="border border-[#141414] font-mono text-xs focus:outline-none focus:ring-1 focus:ring-indigo-500 rounded bg-white"
                     />
                   </div>
                 </div>
@@ -560,17 +572,18 @@ export function MathSymbInputPanel({ onInsert }: MathSymbInputPanelProps) {
         {activeTab === 'integral' && (
           <div className="flex flex-col p-3 bg-gray-50/50 border border-[#141414]/10 rounded gap-4">
             {/* Structural visual layout */}
-            <div className="flex items-center gap-3 justify-center bg-white p-3 border border-[#141414]/10 rounded">
+            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: '16px' }} className="bg-white p-3 border border-[#141414]/10 rounded">
               
               {/* Integral Icon and Bounds */}
-              <div className="flex flex-col items-center">
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 {/* Upper Bound */}
                 <input
                   type="text"
                   value={integUpper}
                   onChange={e => setIntegUpper(e.target.value)}
                   placeholder="∞"
-                  className="w-10 text-center text-[10px] p-0.5 border border-[#141414] font-mono focus:outline-none focus:ring-1 focus:ring-indigo-500 rounded bg-indigo-50/30"
+                  style={{ width: '40px', textAlign: 'center', fontSize: '10px', padding: '2px' }}
+                  className="border border-[#141414] font-mono focus:outline-none focus:ring-1 focus:ring-indigo-500 rounded bg-indigo-50/30"
                 />
                 
                 {/* Icon */}
@@ -582,33 +595,36 @@ export function MathSymbInputPanel({ onInsert }: MathSymbInputPanelProps) {
                   value={integLower}
                   onChange={e => setIntegLower(e.target.value)}
                   placeholder="0"
-                  className="w-10 text-center text-[10px] p-0.5 border border-[#141414] font-mono focus:outline-none focus:ring-1 focus:ring-indigo-500 rounded bg-indigo-50/30"
+                  style={{ width: '40px', textAlign: 'center', fontSize: '10px', padding: '2px' }}
+                  className="border border-[#141414] font-mono focus:outline-none focus:ring-1 focus:ring-indigo-500 rounded bg-indigo-50/30"
                 />
               </div>
 
               {/* Integrand Function */}
-              <div className="flex flex-col items-start gap-0.5 flex-1 max-w-[170px]">
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '2px', width: '180px' }}>
                 <span className="text-[8px] font-mono opacity-30 uppercase pl-1">BIỂU THỨC TÍCH PHÂN (F(X))</span>
                 <input
                   type="text"
                   value={integFunc}
                   onChange={e => setIntegFunc(e.target.value)}
                   placeholder="x^2"
-                  className="w-full p-1.5 border border-[#141414] font-mono text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 rounded font-bold"
+                  style={{ width: '100%', padding: '6px' }}
+                  className="border border-[#141414] font-mono text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 rounded font-bold bg-white"
                 />
               </div>
 
               {/* Differential */}
-              <div className="flex flex-col items-center">
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <span className="text-[8px] font-mono opacity-30 uppercase">BIẾN SỐ</span>
-                <div className="flex items-center text-sm font-bold font-mono">
+                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }} className="text-sm font-bold font-mono">
                   <span>d</span>
                   <input
                     type="text"
                     value={integVar}
                     onChange={e => setIntegVar(e.target.value)}
                     placeholder="x"
-                    className="w-6 text-center text-xs p-0 border border-transparent focus:border-[#141414] focus:outline-none font-bold bg-yellow-50/50"
+                    style={{ width: '24px', textAlign: 'center', padding: '2px', marginLeft: '2px' }}
+                    className="border border-transparent focus:border-[#141414] focus:outline-none font-bold bg-yellow-50/50"
                   />
                 </div>
               </div>

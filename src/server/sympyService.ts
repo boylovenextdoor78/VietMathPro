@@ -358,6 +358,38 @@ def custom_definite_integrate():
             var_obj = get_symbol(var_str, expr_obj)
         
         # -------------------------------------------------
+        # FAST TRIG INTEGRATOR FOR sin(mx)^n * cos(px)^q
+        # -------------------------------------------------
+        if var_obj in expr_obj.free_symbols and expr_obj.count_ops() < 150:
+            try:
+                def check_trig_fast(node):
+                    if not node.has(var_obj):
+                        return True
+                    if isinstance(node, (sympy.sin, sympy.cos)):
+                        arg = node.args[0]
+                        coeff = arg.coeff(var_obj)
+                        return coeff != 0 and (arg - coeff * var_obj) == 0
+                    if isinstance(node, (sympy.Add, sympy.Mul, sympy.Pow)):
+                        return all(check_trig_fast(arg) for arg in node.args)
+                    return False
+
+                if check_trig_fast(expr_obj):
+                    # Rewrite using Euler's formulas and expand analytically
+                    expanded = expr_obj.rewrite(sympy.exp).expand()
+                    terms = sympy.Add.make_args(expanded)
+                    val = sympy.S.Zero
+                    for term in terms:
+                        if not term.has(var_obj):
+                            val += term * (upper_bound - lower_bound)
+                        else:
+                            val += sympy.integrate(term, (var_obj, lower_bound, upper_bound))
+                    
+                    final_res = sympy.re(val).expand().simplify()
+                    return json.dumps({"result": str(final_res), "latex": latex(final_res)})
+            except Exception as trig_err:
+                pass
+
+        # -------------------------------------------------
         # UNIVERSAL PIECEWISE INTEGRATOR
         # -------------------------------------------------
         # Detect any sub-expressions requiring piecewise treatment
