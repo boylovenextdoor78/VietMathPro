@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { Activity, Plus, Trash2, Calculator, Save } from 'lucide-react';
 import Decimal from 'decimal.js';
 import { useProject } from './ProjectContext';
@@ -175,22 +175,22 @@ export default function TraverseModule() {
     <div className="space-y-6 text-gray-300">
       <div className="bg-[#222] border border-[#333] p-4 rounded-sm">
         <h3 className="text-xs uppercase text-yellow-500 font-bold tracking-wider mb-4 border-b border-[#333] pb-2">Starting Control</h3>
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div>
             <label className="text-[10px] text-gray-500 block mb-1">Point Name</label>
-            <input type="text" value={startPoint.name} onChange={e => setStartPoint({...startPoint, name: e.target.value})} className="w-full bg-[#111] border border-[#444] px-2 py-1 text-sm focus:outline-none focus:border-yellow-500" />
+            <input type="text" value={startPoint.name} onChange={e => setStartPoint({...startPoint, name: e.target.value})} className="w-full max-w-[100px] bg-[#111] border border-[#444] px-1.5 py-0.5 text-xs focus:outline-none focus:border-yellow-500 font-bold text-center" />
           </div>
           <div>
             <label className="text-[10px] text-gray-500 block mb-1">Easting (X)</label>
-            <input type="number" value={startPoint.x} onChange={e => setStartPoint({...startPoint, x: e.target.value})} className="w-full bg-[#111] border border-[#444] px-2 py-1 text-sm focus:outline-none focus:border-yellow-500" />
+            <input type="number" value={startPoint.x} onChange={e => setStartPoint({...startPoint, x: e.target.value})} className="w-full max-w-[120px] bg-[#111] border border-[#444] px-1.5 py-0.5 text-xs focus:outline-none focus:border-yellow-500 font-mono" />
           </div>
           <div>
             <label className="text-[10px] text-gray-500 block mb-1">Northing (Y)</label>
-            <input type="number" value={startPoint.y} onChange={e => setStartPoint({...startPoint, y: e.target.value})} className="w-full bg-[#111] border border-[#444] px-2 py-1 text-sm focus:outline-none focus:border-yellow-500" />
+            <input type="number" value={startPoint.y} onChange={e => setStartPoint({...startPoint, y: e.target.value})} className="w-full max-w-[120px] bg-[#111] border border-[#444] px-1.5 py-0.5 text-xs focus:outline-none focus:border-yellow-500 font-mono" />
           </div>
           <div>
             <label className="text-[10px] text-gray-500 block mb-1">Initial Azimuth (DDD.MMSS)</label>
-            <input type="number" value={startPoint.azimuth} onChange={e => setStartPoint({...startPoint, azimuth: e.target.value})} className="w-full bg-[#111] border border-[#444] px-2 py-1 text-sm focus:outline-none focus:border-yellow-500" />
+            <input type="number" value={startPoint.azimuth} onChange={e => setStartPoint({...startPoint, azimuth: e.target.value})} className="w-full max-w-[140px] bg-[#111] border border-[#444] px-1.5 py-0.5 text-xs focus:outline-none focus:border-yellow-500 font-mono" />
           </div>
         </div>
       </div>
@@ -216,22 +216,22 @@ export default function TraverseModule() {
           {legs.map((leg, idx) => (
             <div key={leg.id} className="grid grid-cols-12 gap-2 items-center bg-[#1a1a1a] p-2 border border-[#333]">
               <div className="col-span-2">
-                <input type="text" value={leg.station} onChange={e => updateLeg(leg.id, 'station', e.target.value)} className="w-full bg-[#111] border border-[#444] px-2 py-1 text-sm focus:outline-none focus:border-yellow-500" />
+                <input type="text" value={leg.station} onChange={e => updateLeg(leg.id, 'station', e.target.value)} className="w-full max-w-[80px] bg-[#111] border border-[#444] px-1.5 py-0.5 text-xs focus:outline-none focus:border-yellow-500 text-center font-bold" />
               </div>
               <div className="col-span-3">
-                <input type="number" value={leg.angle} onChange={e => updateLeg(leg.id, 'angle', e.target.value)} className="w-full bg-[#111] border border-[#444] px-2 py-1 text-sm focus:outline-none focus:border-yellow-500" placeholder="e.g. 90.1530" />
+                <input type="number" value={leg.angle} onChange={e => updateLeg(leg.id, 'angle', e.target.value)} className="w-full max-w-[120px] bg-[#111] border border-[#444] px-1.5 py-0.5 text-xs focus:outline-none focus:border-yellow-500 font-mono" placeholder="e.g. 90.1530" />
               </div>
               <div className="col-span-3">
-                <input type="number" value={leg.distance} onChange={e => updateLeg(leg.id, 'distance', e.target.value)} className="w-full bg-[#111] border border-[#444] px-2 py-1 text-sm focus:outline-none focus:border-yellow-500" />
+                <input type="number" value={leg.distance} onChange={e => updateLeg(leg.id, 'distance', e.target.value)} className="w-full max-w-[120px] bg-[#111] border border-[#444] px-1.5 py-0.5 text-xs focus:outline-none focus:border-yellow-500 font-mono" />
               </div>
               <div className="col-span-1">
-                <input type="number" value={leg.m_s} onChange={e => updateLeg(leg.id, 'm_s', e.target.value)} className="w-full bg-[#111] border border-[#444] px-2 py-1 text-sm focus:outline-none focus:border-yellow-500" placeholder="2" />
+                <input type="number" value={leg.m_s} onChange={e => updateLeg(leg.id, 'm_s', e.target.value)} className="w-full max-w-[60px] bg-[#111] border border-[#444] px-1.5 py-0.5 text-xs focus:outline-none focus:border-yellow-500 font-mono" placeholder="2" />
               </div>
               <div className="col-span-2">
-                <input type="number" value={leg.m_beta} onChange={e => updateLeg(leg.id, 'm_beta', e.target.value)} className="w-full bg-[#111] border border-[#444] px-2 py-1 text-sm focus:outline-none focus:border-yellow-500" placeholder="5" />
+                <input type="number" value={leg.m_beta} onChange={e => updateLeg(leg.id, 'm_beta', e.target.value)} className="w-full max-w-[80px] bg-[#111] border border-[#444] px-1.5 py-0.5 text-xs focus:outline-none focus:border-yellow-500 font-mono" placeholder="5" />
               </div>
               <div className="col-span-1 flex justify-center">
-                <button onClick={() => removeLeg(leg.id)} className="text-gray-600 hover:text-red-400"><Trash2 className="w-4 h-4" /></button>
+                <button onClick={() => removeLeg(leg.id)} className="text-gray-600 hover:text-red-400"><Trash2 className="w-3.5 h-3.5" /></button>
               </div>
             </div>
           ))}

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { Calculator, Crosshair, Save } from 'lucide-react';
 import Decimal from 'decimal.js';
 import { useProject } from './ProjectContext';
@@ -132,28 +132,28 @@ export default function IntersectionModule() {
         <div className="bg-[#222] border border-[#333] p-4 rounded-sm">
           <h3 className="text-xs uppercase text-yellow-500 font-bold tracking-wider mb-4 border-b border-[#333] pb-2">Point A</h3>
           <div className="space-y-3">
-            <div>
+            <div className="max-w-[100px]">
               <label className="text-[10px] text-gray-500 block mb-1">Name</label>
-              <input type="text" value={pointA.name} onChange={e => setPointA({...pointA, name: e.target.value})} className="w-full bg-[#111] border border-[#444] px-2 py-1 text-sm focus:outline-none focus:border-yellow-500" />
+              <input type="text" value={pointA.name} onChange={e => setPointA({...pointA, name: e.target.value})} className="w-full bg-[#111] border border-[#444] px-1.5 py-0.5 text-xs focus:outline-none focus:border-yellow-500 font-bold text-center" />
             </div>
-            <div className="grid grid-cols-2 gap-2">
-              <div>
+            <div className="flex gap-2 max-w-[280px]">
+              <div className="w-1/2">
                 <label className="text-[10px] text-gray-500 block mb-1">Easting (X)</label>
-                <input type="number" value={pointA.x} onChange={e => setPointA({...pointA, x: e.target.value})} className="w-full bg-[#111] border border-[#444] px-2 py-1 text-sm focus:outline-none focus:border-yellow-500" />
+                <input type="number" value={pointA.x} onChange={e => setPointA({...pointA, x: e.target.value})} className="w-full bg-[#111] border border-[#444] px-1.5 py-0.5 text-xs focus:outline-none focus:border-yellow-500 font-mono" />
               </div>
-              <div>
+              <div className="w-1/2">
                 <label className="text-[10px] text-gray-500 block mb-1">Northing (Y)</label>
-                <input type="number" value={pointA.y} onChange={e => setPointA({...pointA, y: e.target.value})} className="w-full bg-[#111] border border-[#444] px-2 py-1 text-sm focus:outline-none focus:border-yellow-500" />
+                <input type="number" value={pointA.y} onChange={e => setPointA({...pointA, y: e.target.value})} className="w-full bg-[#111] border border-[#444] px-1.5 py-0.5 text-xs focus:outline-none focus:border-yellow-500 font-mono" />
               </div>
             </div>
             <div>
               <label className="text-[10px] text-gray-500 block mb-1">Observation from A</label>
-              <div className="flex gap-2">
-                <select value={obsA.type} onChange={e => setObsA({...obsA, type: e.target.value})} className="bg-[#111] border border-[#444] px-2 py-1 text-sm focus:outline-none focus:border-yellow-500">
+              <div className="flex gap-2 max-w-[280px]">
+                <select value={obsA.type} onChange={e => setObsA({...obsA, type: e.target.value})} className="bg-[#111] border border-[#444] px-1.5 py-0.5 text-xs focus:outline-none focus:border-yellow-500 font-bold">
                   <option value="angle">Azimuth (DDD.MMSS)</option>
                   <option value="distance" disabled>Distance (m)</option>
                 </select>
-                <input type="number" value={obsA.value} onChange={e => setObsA({...obsA, value: e.target.value})} className="flex-1 bg-[#111] border border-[#444] px-2 py-1 text-sm focus:outline-none focus:border-yellow-500" />
+                <input type="number" value={obsA.value} onChange={e => setObsA({...obsA, value: e.target.value})} className="w-24 bg-[#111] border border-[#444] px-1.5 py-0.5 text-xs focus:outline-none focus:border-yellow-500 font-mono" />
               </div>
             </div>
           </div>
@@ -162,28 +162,28 @@ export default function IntersectionModule() {
         <div className="bg-[#222] border border-[#333] p-4 rounded-sm">
           <h3 className="text-xs uppercase text-yellow-500 font-bold tracking-wider mb-4 border-b border-[#333] pb-2">Point B</h3>
           <div className="space-y-3">
-            <div>
+            <div className="max-w-[100px]">
               <label className="text-[10px] text-gray-500 block mb-1">Name</label>
-              <input type="text" value={pointB.name} onChange={e => setPointB({...pointB, name: e.target.value})} className="w-full bg-[#111] border border-[#444] px-2 py-1 text-sm focus:outline-none focus:border-yellow-500" />
+              <input type="text" value={pointB.name} onChange={e => setPointB({...pointB, name: e.target.value})} className="w-full bg-[#111] border border-[#444] px-1.5 py-0.5 text-xs focus:outline-none focus:border-yellow-500 font-bold text-center" />
             </div>
-            <div className="grid grid-cols-2 gap-2">
-              <div>
+            <div className="flex gap-2 max-w-[280px]">
+              <div className="w-1/2">
                 <label className="text-[10px] text-gray-500 block mb-1">Easting (X)</label>
-                <input type="number" value={pointB.x} onChange={e => setPointB({...pointB, x: e.target.value})} className="w-full bg-[#111] border border-[#444] px-2 py-1 text-sm focus:outline-none focus:border-yellow-500" />
+                <input type="number" value={pointB.x} onChange={e => setPointB({...pointB, x: e.target.value})} className="w-full bg-[#111] border border-[#444] px-1.5 py-0.5 text-xs focus:outline-none focus:border-yellow-500 font-mono" />
               </div>
-              <div>
+              <div className="w-1/2">
                 <label className="text-[10px] text-gray-500 block mb-1">Northing (Y)</label>
-                <input type="number" value={pointB.y} onChange={e => setPointB({...pointB, y: e.target.value})} className="w-full bg-[#111] border border-[#444] px-2 py-1 text-sm focus:outline-none focus:border-yellow-500" />
+                <input type="number" value={pointB.y} onChange={e => setPointB({...pointB, y: e.target.value})} className="w-full bg-[#111] border border-[#444] px-1.5 py-0.5 text-xs focus:outline-none focus:border-yellow-500 font-mono" />
               </div>
             </div>
             <div>
               <label className="text-[10px] text-gray-500 block mb-1">Observation from B</label>
-              <div className="flex gap-2">
-                <select value={obsB.type} onChange={e => setObsB({...obsB, type: e.target.value})} className="bg-[#111] border border-[#444] px-2 py-1 text-sm focus:outline-none focus:border-yellow-500">
+              <div className="flex gap-2 max-w-[280px]">
+                <select value={obsB.type} onChange={e => setObsB({...obsB, type: e.target.value})} className="bg-[#111] border border-[#444] px-1.5 py-0.5 text-xs focus:outline-none focus:border-yellow-500 font-bold">
                   <option value="angle">Azimuth (DDD.MMSS)</option>
                   <option value="distance" disabled>Distance (m)</option>
                 </select>
-                <input type="number" value={obsB.value} onChange={e => setObsB({...obsB, value: e.target.value})} className="flex-1 bg-[#111] border border-[#444] px-2 py-1 text-sm focus:outline-none focus:border-yellow-500" />
+                <input type="number" value={obsB.value} onChange={e => setObsB({...obsB, value: e.target.value})} className="w-24 bg-[#111] border border-[#444] px-1.5 py-0.5 text-xs focus:outline-none focus:border-yellow-500 font-mono" />
               </div>
             </div>
           </div>

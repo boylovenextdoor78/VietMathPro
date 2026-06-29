@@ -7,6 +7,7 @@ import { parseFormula, ParseResult } from './lib/formulaParser';
 import { Mode22 } from './components/Mode22';
 import GeoSurveyPro from './components/geosurvey/GeoSurveyPro';
 import { LinearAlgebraToolboxUI } from './components/LinearAlgebraToolboxUI';
+import { WorkspaceColorSelector, WorkspaceColorSidebar } from './components/WorkspaceColorSelector';
 import { 
   Calculator, 
   Binary, 
@@ -85,7 +86,7 @@ import {
 type Mode = 
   | 'menu'
   | 'mode1' | 'mode2' | 'mode3' | 'mode4' | 'mode5' 
-  | 'mode6' | 'mode7' | 'mode9' | 'mode10' | 'mode11' | 'mode12' | 'mode13' | 'mode14' | 'mode15' | 'mode16' | 'mode17' | 'mode18' | 'mode19' | 'mode20' | 'mode21' | 'mode22' | 'mode23' | 'mode22' | 'mode24' | 'mode25';
+  | 'mode6' | 'mode7' | 'mode9' | 'mode10' | 'mode11' | 'mode12' | 'mode13' | 'mode14' | 'mode15' | 'mode16' | 'mode17' | 'mode18' | 'mode19' | 'mode20' | 'mode22' | 'mode23' | 'mode24' | 'mode25';
 
 interface ModeInfo {
   id: Mode;
@@ -118,7 +119,6 @@ const MODES: ModeInfo[] = [
   { id: 'mode22', title: 'Abs Inequation', description: 'Polynomials with absolute values', icon: <Calculator className="w-6 h-6" />, color: 'bg-rose-800' },
   { id: 'mode19', title: 'Function Lab', description: 'Define f(x), g(x), h(x) for Engine', icon: <FunctionSquare className="w-6 h-6" />, color: 'bg-emerald-600' },
   { id: 'mode20', title: 'Geogebra Geometry Viewer', description: 'Ultimate 2D/3D/4D Graphing Suite', icon: <Maximize2 className="w-6 h-6" />, color: 'bg-rose-700' },
-  { id: 'mode21', title: 'Bonding Lab', description: 'Chemical Bonding & Stability Analysis', icon: <Atom className="w-6 h-6" />, color: 'bg-teal-700' },
   { id: 'mode23', title: 'GeoSurvey Pro X', description: 'Advanced Land Surveying Suite', icon: <MapIcon className="w-6 h-6" />, color: 'bg-yellow-600' },
 ];
 
@@ -128,6 +128,12 @@ export default function App() {
   const [currentMode, setCurrentMode] = useState<Mode>('menu');
   const [isTabletMode, setIsTabletMode] = useState<boolean>(() => {
     return localStorage.getItem('vietmath_tablet_mode') === 'true';
+  });
+  const [workspaceColor, setWorkspaceColor] = useState<string>(() => {
+    return localStorage.getItem('vietmath_workspace_color') || '#E4E3E0';
+  });
+  const [showSidebar, setShowSidebar] = useState<boolean>(() => {
+    return localStorage.getItem('vietmath_show_sidebar') !== 'false';
   });
   const [globalBuffer, setGlobalBuffer] = useState<string>('');
   const [userFunctions, setUserFunctions] = useState({
@@ -234,18 +240,24 @@ export default function App() {
   };
 
   return (
-    <div className={cn(
-      "min-h-screen font-sans selection:bg-[#141414] selection:text-[#E4E3E0] transition-colors duration-300",
-      isTabletMode 
-        ? "bg-[#1C1B1A] p-4 md:p-8 flex flex-col items-center justify-center min-h-screen" 
-        : "bg-[#E4E3E0] text-[#141414]"
-    )}>
-      <div className={cn(
-        "w-full transition-all duration-300 flex flex-col relative",
+    <div 
+      className={cn(
+        "min-h-screen font-sans selection:bg-[#141414] selection:text-[#E4E3E0] transition-colors duration-300",
         isTabletMode 
-          ? "max-w-[1280px] h-[90vh] md:h-[800px] bg-[#E4E3E0] text-[#141414] border-[16px] border-[#2E2E2D] rounded-[2.5rem] shadow-2xl overflow-y-auto custom-scrollbar" 
-          : "min-h-screen"
-      )}>
+          ? "bg-[#1C1B1A] p-4 md:p-8 flex flex-col items-center justify-center min-h-screen" 
+          : "text-[#141414]"
+      )}
+      style={!isTabletMode ? { backgroundColor: workspaceColor } : undefined}
+    >
+      <div 
+        className={cn(
+          "w-full transition-all duration-300 flex flex-col relative",
+          isTabletMode 
+            ? "max-w-[1280px] h-[90vh] md:h-[800px] text-[#141414] border-[16px] border-[#2E2E2D] rounded-[2.5rem] shadow-2xl overflow-y-auto custom-scrollbar" 
+            : "min-h-screen"
+        )}
+        style={isTabletMode ? { backgroundColor: workspaceColor } : undefined}
+      >
         {isTabletMode && (
           <div className="absolute top-2 left-1/2 -translate-x-1/2 w-3.5 h-3.5 bg-[#111] rounded-full z-50 border border-[#444] pointer-events-none" />
         )}
@@ -314,6 +326,22 @@ export default function App() {
               </button>
             )}
           </div>
+
+          {/* Workspace Background/Border Color Selector */}
+          <WorkspaceColorSelector 
+            currentColor={workspaceColor} 
+            onChangeColor={(color) => {
+              localStorage.setItem('vietmath_workspace_color', color);
+              setWorkspaceColor(color);
+            }} 
+            isMenuMode={currentMode === 'menu'}
+            showSidebar={showSidebar}
+            onToggleSidebar={() => {
+              const val = !showSidebar;
+              localStorage.setItem('vietmath_show_sidebar', String(val));
+              setShowSidebar(val);
+            }}
+          />
 
           {/* Nút chuyển đổi Giao diện Tablet */}
           <button
@@ -513,35 +541,59 @@ export default function App() {
       <main className="max-w-7xl mx-auto p-6 md:p-12">
         <AnimatePresence mode="wait">
           {currentMode === 'menu' ? (
-            <motion.div 
-              key="menu"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-            >
-              {MODES.map((mode) => (
-                <button
-                  key={mode.id}
-                  onClick={() => setCurrentMode(mode.id)}
-                  className="group relative flex flex-col p-8 bg-white border border-[#141414] hover:bg-[#141414] transition-all duration-300 text-left"
-                >
-                  <div className={cn("w-12 h-12 flex items-center justify-center mb-6 transition-transform group-hover:scale-110", mode.color)}>
-                    <div className="text-white">{mode.icon}</div>
-                  </div>
-                  <h3 className="font-serif italic text-2xl mb-2 group-hover:text-[#E4E3E0]">{mode.title}</h3>
-                  <p className="text-sm opacity-60 group-hover:text-[#E4E3E0] group-hover:opacity-80 font-mono">{mode.description}</p>
-                  <ArrowRight className="absolute bottom-8 right-8 w-6 h-6 opacity-0 group-hover:opacity-100 group-hover:text-[#E4E3E0] transition-all transform translate-x-[-10px] group-hover:translate-x-0" />
-                </button>
-              ))}
-            </motion.div>
+            <div className={cn(
+              "grid grid-cols-1 gap-8 items-start",
+              showSidebar ? "lg:grid-cols-10" : "grid-cols-1"
+            )}>
+              <motion.div 
+                key="menu"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className={cn(
+                  "grid grid-cols-1 md:grid-cols-2 gap-6",
+                  showSidebar ? "lg:col-span-8 lg:grid-cols-3" : "w-full lg:grid-cols-4"
+                )}
+              >
+                {MODES.map((mode) => (
+                  <button
+                    key={mode.id}
+                    onClick={() => setCurrentMode(mode.id)}
+                    className="group relative flex flex-col p-8 bg-white border border-[#141414] hover:bg-[#141414] transition-all duration-300 text-left"
+                  >
+                    <div className={cn("w-12 h-12 flex items-center justify-center mb-6 transition-transform group-hover:scale-110", mode.color)}>
+                      <div className="text-white">{mode.icon}</div>
+                    </div>
+                    <h3 className="font-serif italic text-2xl mb-2 group-hover:text-[#E4E3E0]">{mode.title}</h3>
+                    <p className="text-sm opacity-60 group-hover:text-[#E4E3E0] group-hover:opacity-80 font-mono">{mode.description}</p>
+                    <ArrowRight className="absolute bottom-8 right-8 w-6 h-6 opacity-0 group-hover:opacity-100 group-hover:text-[#E4E3E0] transition-all transform translate-x-[-10px] group-hover:translate-x-0" />
+                  </button>
+                ))}
+              </motion.div>
+
+              {/* Sidebar Panel 20% width (bề ngang 2 dài 8) covering the empty workspace area */}
+              {showSidebar && (
+                <div className="lg:col-span-2 w-full lg:sticky lg:top-8">
+                  <WorkspaceColorSidebar 
+                    currentColor={workspaceColor} 
+                    onChangeColor={(color) => {
+                      localStorage.setItem('vietmath_workspace_color', color);
+                      setWorkspaceColor(color);
+                    }} 
+                  />
+                </div>
+              )}
+            </div>
           ) : (
             <motion.div
               key={currentMode}
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
-              className="bg-white border border-[#141414] p-8 md:p-12 shadow-[12px_12px_0px_0px_rgba(20,20,20,1)]"
+              className={cn(
+                "bg-white border border-[#141414] shadow-[12px_12px_0px_0px_rgba(20,20,20,1)]",
+                currentMode === 'mode23' ? "p-0" : "p-8 md:p-12"
+              )}
             >
               <ModeRenderer 
                 mode={currentMode} 
@@ -2261,7 +2313,6 @@ function ModeRenderer({ mode, globalBuffer, setGlobalBuffer, userFunctions, setU
     case 'mode18': return <Mode18 />;
     case 'mode19': return <Mode19 userFunctions={userFunctions} setUserFunctions={setUserFunctions} />;
     case 'mode20': return <Mode20 />;
-    case 'mode21': return <Mode21 />;
     case 'mode22': return <Mode22 />;
     case 'mode23': return <GeoSurveyPro />;
     case 'mode24': return <FunctionVariationTableur />;
@@ -8504,330 +8555,6 @@ function Mode20() {
         </div>
       </div>
     </div>
-  );
-}
-
-
-function Mode21() {
-  const [showAuDiagram, setShowAuDiagram] = useState(false);
-  const sections = [
-    {
-      title: "1. Chi tiết về các Nguyên tố Vô cơ (Inorganic)",
-      items: [
-        {
-          name: "Nhóm Khí hiếm (He, Ne, Ar, Kr)",
-          reason: "Vỏ electron đã bão hòa (s²p⁶). Chúng không có xu hướng chia sẻ electron để tạo liên kết cộng hóa trị với Oxy.",
-          exception: "Xenon (Xe) có thể tạo hợp chất với Oxy (XeO₃, XeO₄) nhưng không tồn tại dạng hydroxit bền.",
-          icon: <Wind className="w-5 h-5 text-blue-400" />
-        },
-        {
-          name: "Các Kim loại kiềm mạnh (Li, Na, K, Rb, Cs)",
-          reason: "Độ âm điện rất thấp. Khi kết hợp với nhóm OH, chúng tạo ra liên kết ion (Na⁺[OH]⁻).",
-          note: "Đây là các bazơ tan (hydroxide ion), không phải nhóm chức -OH cộng hóa trị.",
-          icon: <Zap className="w-5 h-5 text-yellow-400" />
-        },
-        {
-          name: "Flo (Fluorine)",
-          reason: "Flo 'tham lam' electron hơn cả Oxy. Hợp chất duy nhất HOF cực kỳ kém bền, phân hủy ở nhiệt độ phòng.",
-          icon: <AlertTriangle className="w-5 h-5 text-red-400" />
-        }
-      ]
-    },
-    {
-      title: "2. Chi tiết về các Hợp chất Hữu cơ (Organic)",
-      items: [
-        {
-          name: "Hydrocacbon (Chỉ có C và H)",
-          desc: "Ankan, Anken, Ankin chỉ gồm liên kết C-C và C-H. Hoàn toàn không có Oxy.",
-          note: "Aren (Benzen, Naphtalen) nếu gắn thêm -OH sẽ biến thành Phenol.",
-          icon: <FlaskConical className="w-5 h-5 text-emerald-400" />
-        },
-        {
-          name: "Dẫn xuất Halogen (R-X)",
-          desc: "Thay thế H bằng Halogen (F, Cl, Br, I). Ví dụ: CHCl₃, C₂H₅Br. Không chứa Oxy.",
-          icon: <Beaker className="w-5 h-5 text-rose-400" />
-        },
-        {
-          name: "Hợp chất chứa Oxy 'khóa' liên kết",
-          subItems: [
-            { name: "Ete (R-O-R')", desc: "Oxy đóng vai trò cầu nối, dùng hết hóa trị cho C." },
-            { name: "Este (R-CO-O-R')", desc: "Nhóm -OH của axit bị thay thế bởi gốc -OR'." },
-            { name: "Anđehit & Xeton", desc: "Oxy liên kết đôi với Cacbon (C=O). Không có liên kết O-H đơn." }
-          ],
-          icon: <Layers className="w-5 h-5 text-indigo-400" />
-        },
-        {
-          name: "Hợp chất chứa Nitơ",
-          desc: "Nitro (R-NO₂) Oxy liên kết trực tiếp với Nitơ. Nitrin (Xyanua - R-CN) không có Oxy.",
-          icon: <Radiation className="w-5 h-5 text-purple-400" />
-        }
-      ]
-    },
-    {
-      title: "3. Tại sao một số chất 'ép' không cho có nhóm -OH?",
-      items: [
-        {
-          name: "Tính kém bền (Enol)",
-          desc: "Dạng Enol (C=C-OH) lập tức tự chuyển hóa thành dạng Xeton (C=O) bền hơn.",
-          icon: <Thermometer className="w-5 h-5 text-orange-400" />
-        },
-        {
-          name: "Quy tắc Erlenmeyer",
-          desc: "Một nguyên tử Cacbon thường không thể giữ cùng lúc 2 nhóm -OH; chúng sẽ tự tách nước tạo C=O.",
-          icon: <AlertCircle className="w-5 h-5 text-red-500" />
-        }
-      ]
-    },
-    {
-      title: "4. Các nguyên tố không thể đi một mình với H, F, Cl",
-      items: [
-        {
-          name: "Khí hiếm nhẹ (He, Ne, Ar)",
-          reason: "Cấu hình electron bão hòa. Không tồn tại các phân tử như HeH, NeF, ArCl.",
-          icon: <Wind className="w-5 h-5 text-blue-300" />
-        },
-        {
-          name: "Kim loại cực kém hoạt động (Au, Pt)",
-          reason: "Không tạo hidrua bền. Hydro chỉ hòa tan vào mạng tinh thể chứ không tạo liên kết hóa học thực thụ.",
-          icon: <Zap className="w-5 h-5 text-amber-500" />
-        },
-        {
-          name: "Gốc hữu cơ bão hòa",
-          reason: "Ankan đã bão hòa (như CH₄) không thể nhận thêm H đơn lẻ để tạo CH₅.",
-          icon: <Atom className="w-5 h-5 text-teal-500" />
-        }
-      ]
-    },
-    {
-      title: "5. Nhóm Axit Phức Chất Kim Loại Quý",
-      items: [
-        {
-          name: "Axit Cloauric (HAuCl₄)",
-          desc: "Hình thành từ Vàng (Au) trong nước cường toan. Tinh thể vàng cam, rất háo nước.",
-          note: "Ứng dụng: Sản xuất vàng Nano, mạ vàng linh kiện.",
-          icon: <Zap className="w-5 h-5 text-yellow-500" />
-        },
-        {
-          name: "Axit Chloroplatinic (H₂PtCl₆)",
-          desc: "Hình thành từ Bạch kim (Pt). Tinh thể đỏ sẫm, tan cực tốt trong nước.",
-          note: "Ứng dụng: Xúc tác quan trọng, sản xuất thuốc Cisplatin.",
-          icon: <Layers className="w-5 h-5 text-red-500" />
-        }
-      ]
-    },
-    {
-      title: "6. Nhóm Siêu Axit (Superacids)",
-      items: [
-        {
-          name: "Axit Fluoroantimonic (HSbF₆)",
-          reason: "Mạnh gấp 10 triệu tỷ lần H₂SO₄ đậm đặc. Ăn mòn thủy tinh, đá và hữu cơ.",
-          note: "Chỉ bảo quản được trong bình nhựa Teflon (PTFE).",
-          icon: <Radiation className="w-5 h-5 text-purple-600" />
-        },
-        {
-          name: "Axit Ma thuật (Magic Acid)",
-          reason: "Hòa tan được cả nến parafin (hydrocacbon) - điều axit thường không làm được.",
-          icon: <Zap className="w-5 h-5 text-blue-600" />
-        }
-      ]
-    }
-  ];
-
-  return (
-    <div className="space-y-12">
-      <div className="border-b border-[#141414] pb-6">
-        <h2 className="font-serif italic text-5xl">Bonding & Stability Lab</h2>
-        <p className="font-mono text-xs opacity-50 mt-3 uppercase tracking-[0.2em]">Phân tích bản chất liên kết & Nhóm chức -OH</p>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {sections.map((section, sIdx) => (
-          <div key={sIdx} className="space-y-6">
-            <h3 className="font-mono text-[10px] uppercase tracking-widest opacity-40 border-b border-[#141414]/10 pb-2">{section.title}</h3>
-            <div className="space-y-4">
-              {section.items.map((item, iIdx) => (
-                <motion.div 
-                  key={iIdx}
-                  whileHover={{ x: 5 }}
-                  className="p-6 bg-white border border-[#141414] shadow-[4px_4px_0px_0px_rgba(20,20,20,1)] space-y-3"
-                >
-                  <div className="flex items-center gap-3">
-                    {item.icon}
-                    <h4 className="font-serif italic text-lg">{item.name}</h4>
-                  </div>
-                  {item.reason && <p className="text-xs opacity-70 leading-relaxed font-mono">{item.reason}</p>}
-                  {item.desc && <p className="text-xs opacity-70 leading-relaxed font-mono">{item.desc}</p>}
-                  {item.exception && (
-                    <div className="p-2 bg-blue-50 border-l-2 border-blue-400 text-[10px] font-mono italic">
-                      Ngoại lệ: {item.exception}
-                    </div>
-                  )}
-                  {item.note && (
-                    <div className="p-2 bg-gray-50 border-l-2 border-gray-400 text-[10px] font-mono opacity-60">
-                      Lưu ý: {item.note}
-                    </div>
-                  )}
-                  {item.subItems && (
-                    <div className="space-y-2 pt-2 border-t border-[#141414]/5">
-                      {item.subItems.map((sub, subIdx) => (
-                        <div key={subIdx} className="text-[10px] font-mono">
-                          <span className="font-bold opacity-80">{sub.name}:</span> <span className="opacity-60">{sub.desc}</span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <div className="p-8 bg-[#141414] text-[#E4E3E0] border border-[#141414] space-y-8">
-        <div className="space-y-6">
-          <div className="flex items-center gap-2 opacity-40">
-            <Info className="w-4 h-4" />
-            <span className="font-mono text-[10px] uppercase tracking-widest">Bảng tổng hợp Axit Phức Chất Kim Loại Quý</span>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full font-mono text-[10px] border-collapse">
-              <thead>
-                <tr className="border-b border-white/20">
-                  <th className="p-4 text-left opacity-50">Tên Axit</th>
-                  <th className="p-4 text-left opacity-50">Công thức</th>
-                  <th className="p-4 text-left opacity-50">Kim loại chính</th>
-                  <th className="p-4 text-left opacity-50">Đặc điểm nhận dạng</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/10">
-                <tr>
-                  <td className="p-4 font-bold">Axit Cloauric</td>
-                  <td className="p-4">HAuCl₄</td>
-                  <td className="p-4">Vàng (Au)</td>
-                  <td className="p-4">Tinh thể vàng cam, rất háo nước</td>
-                </tr>
-                <tr>
-                  <td className="p-4 font-bold">Axit Chloroplatinic</td>
-                  <td className="p-4">H₂PtCl₆</td>
-                  <td className="p-4">Bạch kim (Pt)</td>
-                  <td className="p-4">Tinh thể đỏ sẫm, tan cực tốt</td>
-                </tr>
-                <tr>
-                  <td className="p-4 font-bold">Axit Chloropalladic</td>
-                  <td className="p-4">H₂PdCl₄</td>
-                  <td className="p-4">Palladium (Pd)</td>
-                  <td className="p-4">Dung dịch màu nâu, kém bền</td>
-                </tr>
-                <tr>
-                  <td className="p-4 font-bold">Axit Perrhenic</td>
-                  <td className="p-4">HReO₄</td>
-                  <td className="p-4">Rhenium (Re)</td>
-                  <td className="p-4">Chất lỏng không màu, oxy hóa mạnh</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <div className="space-y-4 border-t border-white/10 pt-8">
-          <div className="flex items-center gap-2 opacity-40">
-            <Layers className="w-4 h-4" />
-            <span className="font-mono text-[10px] uppercase tracking-widest">Tóm tắt khả năng "Fusion"</span>
-          </div>
-          <p className="text-xs font-serif italic opacity-80 leading-relaxed max-w-3xl">
-            Các axit này không tồn tại sẵn trong tự nhiên mà là kết quả của việc "cưỡng ép" các nguyên tố bền vững nhất (như Vàng, Bạch kim) hoặc các khí độc (Flo) kết hợp với nhau. Chúng đại diện cho giới hạn cực đoan của hóa học về cả giá trị kinh tế (axit vàng/platin) và sức mạnh hủy diệt (siêu axit).
-          </p>
-          <div className="pt-4">
-            <button 
-              onClick={() => setShowAuDiagram(true)}
-              className="px-6 py-3 border border-white/20 hover:bg-white hover:text-[#141414] transition-all font-mono text-[10px] uppercase tracking-widest flex items-center gap-2 group"
-            >
-              Xem sơ đồ bẻ gãy liên kết Au trong nước cường toan
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </button>
-          </div>
-        </div>
-
-        <AnimatePresence>
-          {showAuDiagram && (
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm"
-              onClick={() => setShowAuDiagram(false)}
-            >
-              <motion.div 
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.9, opacity: 0 }}
-                className="relative max-w-5xl w-full bg-white p-2 shadow-2xl"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <button 
-                  onClick={() => setShowAuDiagram(false)}
-                  className="absolute -top-12 right-0 text-white hover:text-red-400 transition-colors flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest"
-                >
-                  Đóng <X className="w-5 h-5" />
-                </button>
-                <div className="relative w-full overflow-hidden bg-[#141414] rounded-t-lg flex items-center justify-center min-h-[300px]">
-                  <img 
-                    src="/aqua-regia.png" 
-                    alt="Sơ đồ bẻ gãy liên kết Au trong nước cường toan"
-                    className="w-full h-auto max-h-[70vh] object-contain relative z-10"
-                    referrerPolicy="no-referrer"
-                  />
-                </div>
-                <div className="p-4 bg-white border-t border-gray-100">
-                  <h3 className="font-serif italic text-xl text-[#141414]">Cơ chế hòa tan Vàng trong Nước cường toan (Aqua Regia)</h3>
-                  <p className="text-[10px] font-mono opacity-60 mt-1 uppercase tracking-widest">Phản ứng tạo phức chất Chloroauric Acid (HAuCl₄)</p>
-                </div>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        <div className="space-y-6 border-t border-white/10 pt-8">
-          <div className="flex items-center gap-2 opacity-40">
-            <Info className="w-4 h-4" />
-            <span className="font-mono text-[10px] uppercase tracking-widest">Bảng đối chiếu hợp chất nhị phân (H, F, Cl)</span>
-          </div>
-        <div className="overflow-x-auto">
-          <table className="w-full font-mono text-[10px] border-collapse">
-            <thead>
-              <tr className="border-b border-white/20">
-                <th className="p-4 text-left opacity-50">Đối tượng</th>
-                <th className="p-4 text-left opacity-50">Với Hydro (H)</th>
-                <th className="p-4 text-left opacity-50">Với Flo (F) / Clo (Cl)</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/10">
-              <tr>
-                <td className="p-4 font-bold">Khí hiếm (He, Ne)</td>
-                <td className="p-4">Tuyệt đối không</td>
-                <td className="p-4">Tuyệt đối không</td>
-              </tr>
-              <tr>
-                <td className="p-4 font-bold">Kim loại quý (Au, Pt)</td>
-                <td className="p-4">Không tạo hidrua bền</td>
-                <td className="p-4">Có thể tạo muối (AuCl₃, PtF₆)</td>
-              </tr>
-              <tr>
-                <td className="p-4 font-bold">Gốc hữu cơ bão hòa</td>
-                <td className="p-4">Không thể nhận thêm</td>
-                <td className="p-4">Không thể nhận thêm (phải phản ứng thế)</td>
-              </tr>
-              <tr>
-                <td className="p-4 font-bold">Nitơ (N₂)</td>
-                <td className="p-4">Cần xúc tác mạnh (NH₃)</td>
-                <td className="p-4">Rất khó tạo hợp chất đơn lẻ bền</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
   );
 }
 

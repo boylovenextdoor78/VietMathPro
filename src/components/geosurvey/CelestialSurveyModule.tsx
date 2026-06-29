@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { Satellite, Globe, Target, FileText, AlertTriangle, CheckCircle2, Crosshair, Settings, Map as MapIcon } from 'lucide-react';
 import Decimal from 'decimal.js';
 import proj4 from 'proj4';
@@ -187,11 +187,11 @@ END OF REPORT
                   <h4 className="text-xs text-gray-500 uppercase border-b border-[#444] pb-2">Satellite Position</h4>
                   <div>
                     <label className="text-[10px] text-gray-500 block mb-1">GEO Longitude (°E)</label>
-                    <input type="number" value={satLon} onChange={e => setSatLon(e.target.value)} className="w-full bg-[#111] border border-[#444] px-3 py-2 text-sm focus:border-yellow-500 outline-none font-mono" />
+                    <input type="number" value={satLon} onChange={e => setSatLon(e.target.value)} className="w-full max-w-[180px] bg-[#111] border border-[#444] px-3 py-2 text-sm focus:border-yellow-500 outline-none font-mono" />
                   </div>
                   <div>
                     <label className="text-[10px] text-gray-500 block mb-1">Altitude (m)</label>
-                    <input type="number" value={satAlt} onChange={e => setSatAlt(e.target.value)} className="w-full bg-[#111] border border-[#444] px-3 py-2 text-sm focus:border-yellow-500 outline-none font-mono" />
+                    <input type="number" value={satAlt} onChange={e => setSatAlt(e.target.value)} className="w-full max-w-[180px] bg-[#111] border border-[#444] px-3 py-2 text-sm focus:border-yellow-500 outline-none font-mono" />
                   </div>
                 </div>
 
@@ -199,15 +199,15 @@ END OF REPORT
                   <h4 className="text-xs text-gray-500 uppercase border-b border-[#444] pb-2">Sensor Line of Sight (LOS)</h4>
                   <div>
                     <label className="text-[10px] text-gray-500 block mb-1">Pitch / North-South Angle (°)</label>
-                    <input type="number" value={losPitch} onChange={e => setLosPitch(e.target.value)} className="w-full bg-[#111] border border-[#444] px-3 py-2 text-sm focus:border-yellow-500 outline-none font-mono" />
+                    <input type="number" value={losPitch} onChange={e => setLosPitch(e.target.value)} className="w-full max-w-[180px] bg-[#111] border border-[#444] px-3 py-2 text-sm focus:border-yellow-500 outline-none font-mono" />
                   </div>
                   <div>
                     <label className="text-[10px] text-gray-500 block mb-1">Roll / East-West Angle (°)</label>
-                    <input type="number" value={losRoll} onChange={e => setLosRoll(e.target.value)} className="w-full bg-[#111] border border-[#444] px-3 py-2 text-sm focus:border-yellow-500 outline-none font-mono" />
+                    <input type="number" value={losRoll} onChange={e => setLosRoll(e.target.value)} className="w-full max-w-[180px] bg-[#111] border border-[#444] px-3 py-2 text-sm focus:border-yellow-500 outline-none font-mono" />
                   </div>
                   <div>
                     <label className="text-[10px] text-gray-500 block mb-1">Swath FOV Angle (°)</label>
-                    <input type="number" value={swathAngle} onChange={e => setSwathAngle(e.target.value)} className="w-full bg-[#111] border border-[#444] px-3 py-2 text-sm focus:border-yellow-500 outline-none font-mono" />
+                    <input type="number" value={swathAngle} onChange={e => setSwathAngle(e.target.value)} className="w-full max-w-[180px] bg-[#111] border border-[#444] px-3 py-2 text-sm focus:border-yellow-500 outline-none font-mono" />
                   </div>
                 </div>
               </div>
@@ -230,7 +230,7 @@ END OF REPORT
                 <div className="space-y-4">
                   <div>
                     <label className="text-[10px] text-gray-500 block mb-1">Target CRS</label>
-                    <select value={targetCrs} onChange={e => setTargetCrs(e.target.value)} className="w-full bg-[#111] border border-[#444] px-3 py-2 text-sm focus:border-yellow-500 outline-none">
+                    <select value={targetCrs} onChange={e => setTargetCrs(e.target.value)} className="w-full max-w-[280px] bg-[#111] border border-[#444] px-3 py-2 text-sm focus:border-yellow-500 outline-none">
                       <option value="EPSG:9210">EPSG:9210 (VN-2000 Ho Chi Minh)</option>
                       <option value="EPSG:3405">EPSG:3405 (VN-2000 TM-3 105E)</option>
                       <option value="CUSTOM_VN2000">Custom VN-2000 Province</option>
@@ -241,7 +241,7 @@ END OF REPORT
                   {targetCrs === 'CUSTOM_VN2000' && (
                     <div>
                       <label className="text-[10px] text-gray-500 block mb-1">Province Preset</label>
-                      <select value={selectedProvince} onChange={e => setSelectedProvince(e.target.value)} className="w-full bg-[#111] border border-[#444] px-3 py-2 text-sm focus:border-yellow-500 outline-none">
+                      <select value={selectedProvince} onChange={e => setSelectedProvince(e.target.value)} className="w-full max-w-[280px] bg-[#111] border border-[#444] px-3 py-2 text-sm focus:border-yellow-500 outline-none">
                         {VN_PROVINCES.map(p => <option key={p.id} value={p.id}>{p.name} (CM: {p.cm}°)</option>)}
                       </select>
                     </div>
@@ -251,7 +251,7 @@ END OF REPORT
                 <div className="space-y-4">
                   <div>
                     <label className="text-[10px] text-gray-500 block mb-1">Precision Mode</label>
-                    <select value={precisionMode} onChange={e => setPrecisionMode(e.target.value as any)} className="w-full bg-[#111] border border-[#444] px-3 py-2 text-sm focus:border-yellow-500 outline-none">
+                    <select value={precisionMode} onChange={e => setPrecisionMode(e.target.value as any)} className="w-full max-w-[280px] bg-[#111] border border-[#444] px-3 py-2 text-sm focus:border-yellow-500 outline-none">
                       <option value="ultra">Research Ultra Precision (Iterative &le; 1e-14)</option>
                       <option value="cadastre">Official Cadastre Mode (Standard 7-Param)</option>
                       <option value="survey">Survey Precision (Fast 7-Param)</option>

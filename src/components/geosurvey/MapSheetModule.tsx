@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { Globe, Map, Search, ArrowRight, HelpCircle, RefreshCw, Layers, MapPin, Minimize2, Maximize2 } from 'lucide-react';
 import VN2000MapViewer from './VN2000MapViewer';
 
@@ -554,8 +554,8 @@ export default function MapSheetModule() {
         }
       }
       // 2. Scale 1:1.000 (e.g. F-48-68-(256-h-III))
-      else if (/^([A-Z])-?(\d{1,2})-?(\d{1,3})-?\(?(\d{1,3})-([A-Z])-?([I|V|X]+)\)?$/.test(nameClean)) {
-        const match = nameClean.match(/^([A-Z])-?(\d{1,2})-?(\d{1,3})-?\(?(\d{1,3})-([A-Z])-?([I|V|X]+)\)?$/);
+      else if (/^([A-Z])-?(\d{1,2})-?(\d{1,3})-?\(?(\d{1,3})-([A-Z])-?(III|II|IV|I)\)?$/.test(nameClean)) {
+        const match = nameClean.match(/^([A-Z])-?(\d{1,2})-?(\d{1,3})-?\(?(\d{1,3})-([A-Z])-?(III|II|IV|I)\)?$/);
         if (match) {
           const bandChar = match[1];
           const zoneVal = parseInt(match[2], 10);
@@ -783,8 +783,8 @@ export default function MapSheetModule() {
         }
       }
       // 9. National Scale 1:10.000 (e.g. 6329-A-a-1 or 6329-I-a-1)
-      else if (/^(\d{4})-?([A-D|I|II|III|IV])-?([A-D|a-d])-?([1-4])$/.test(nameClean)) {
-        const match = nameClean.match(/^(\d{4})-?([A-D|I|II|III|IV])-?([A-D|a-d])-?([1-4])$/);
+      else if (/^(\d{4})-?(A|B|C|D|III|II|IV|I)-?([A-Da-d])-?([1-4])$/.test(nameClean)) {
+        const match = nameClean.match(/^(\d{4})-?(A|B|C|D|III|II|IV|I)-?([A-Da-d])-?([1-4])$/);
         if (match) {
           const parentCode = match[1];
           const sub50k = match[2];
@@ -829,8 +829,8 @@ export default function MapSheetModule() {
         }
       }
       // 10. National Scale 1:25.000 (e.g. 6329-A-a or 6329-I-a)
-      else if (/^(\d{4})-?([A-D|I|II|III|IV])-?([A-D|a-d])$/.test(nameClean)) {
-        const match = nameClean.match(/^(\d{4})-?([A-D|I|II|III|IV])-?([A-D|a-d])$/);
+      else if (/^(\d{4})-?(A|B|C|D|III|II|IV|I)-?([A-Da-d])$/.test(nameClean)) {
+        const match = nameClean.match(/^(\d{4})-?(A|B|C|D|III|II|IV|I)-?([A-Da-d])$/);
         if (match) {
           const parentCode = match[1];
           const sub50k = match[2];
@@ -870,8 +870,8 @@ export default function MapSheetModule() {
         }
       }
       // 11. National Scale 1:50.000 (e.g. 6329-A or 6329-I)
-      else if (/^(\d{4})-?([A-D|I|II|III|IV])$/.test(nameClean)) {
-        const match = nameClean.match(/^(\d{4})-?([A-D|I|II|III|IV])$/);
+      else if (/^(\d{4})-?(A|B|C|D|III|II|IV|I)$/.test(nameClean)) {
+        const match = nameClean.match(/^(\d{4})-?(A|B|C|D|III|II|IV|I)$/);
         if (match) {
           const parentCode = match[1];
           const sub = match[2];
@@ -1167,22 +1167,22 @@ export default function MapSheetModule() {
   }
 
   return (
-    <div className="bg-[#1a1a1a] p-6 border border-[#333] rounded-sm text-gray-200">
-      <div className="flex items-center justify-between border-b border-[#333] pb-4 mb-6">
-        <h2 className="text-base font-bold text-yellow-500 uppercase flex items-center gap-2">
-          <Globe className="w-5 h-5 text-yellow-500" />
+    <div className="bg-white p-4 sm:p-6 text-black">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b-2 border-[#141414] pb-4 mb-6 gap-3">
+        <h2 className="text-base font-bold text-black uppercase flex items-center gap-2">
+          <Globe className="w-5 h-5 text-yellow-600" />
           Tọa độ GPS ↔ Số hiệu mảnh Bản đồ VN-2000
         </h2>
-        <div className="flex gap-2 bg-[#111] p-1 rounded-sm border border-[#333]">
+        <div className="flex gap-2 bg-stone-100 p-1 rounded-sm border-2 border-[#141414]">
           <button 
             onClick={() => { setDirection('coord_to_sheet'); setResult(null); setError(null); }}
-            className={`px-3 py-1.5 text-xs font-bold uppercase transition-all ${direction === 'coord_to_sheet' ? 'bg-yellow-500 text-black' : 'text-gray-400 hover:text-gray-200'}`}
+            className={`px-3 py-1.5 text-xs font-bold uppercase transition-all rounded-sm cursor-pointer ${direction === 'coord_to_sheet' ? 'bg-yellow-400 text-black border-2 border-[#141414] shadow-[1px_1px_0px_0px_rgba(20,20,20,1)]' : 'text-gray-700 hover:text-black'}`}
           >
             GPS → Số hiệu mảnh
           </button>
           <button 
             onClick={() => { setDirection('sheet_to_coord'); setResult(null); setError(null); }}
-            className={`px-3 py-1.5 text-xs font-bold uppercase transition-all ${direction === 'sheet_to_coord' ? 'bg-yellow-500 text-black' : 'text-gray-400 hover:text-gray-200'}`}
+            className={`px-3 py-1.5 text-xs font-bold uppercase transition-all rounded-sm cursor-pointer ${direction === 'sheet_to_coord' ? 'bg-yellow-400 text-black border-2 border-[#141414] shadow-[1px_1px_0px_0px_rgba(20,20,20,1)]' : 'text-gray-700 hover:text-black'}`}
           >
             Số hiệu mảnh → GPS
           </button>
@@ -1192,71 +1192,71 @@ export default function MapSheetModule() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Input Panel */}
         <div className="lg:col-span-4 space-y-4">
-          <div className="bg-[#111] p-4 border border-[#333]">
-            <h3 className="text-xs text-yellow-500 uppercase tracking-wider mb-4 font-bold flex items-center gap-2">
-              <RefreshCw className="w-4 h-4 text-yellow-500" />
+          <div className="bg-white p-4 border-2 border-[#141414] shadow-[4px_4px_0px_0px_rgba(20,20,20,1)]">
+            <h3 className="text-xs text-black uppercase tracking-wider mb-4 font-bold flex items-center gap-2">
+              <RefreshCw className="w-4 h-4 text-yellow-600" />
               Thông số đầu vào
             </h3>
 
             {direction === 'coord_to_sheet' ? (
               <div className="space-y-4">
                 <div>
-                  <label className="text-[10px] text-gray-400 block mb-1 uppercase tracking-wider">Vĩ độ B (Dec_Deg N)</label>
+                  <label className="text-[10px] text-black font-bold block mb-1 uppercase tracking-wider">Vĩ độ B (Dec_Deg N)</label>
                   <input 
                     type="number" 
                     value={latInput} 
                     onChange={e => setLatInput(e.target.value)} 
                     placeholder="Ví dụ: 10.353427" 
-                    className="w-full bg-[#161616] border border-[#444] px-3 py-2 text-sm text-[#e0e0e0] focus:border-yellow-500 focus:outline-none font-mono"
+                    className="w-full bg-white border-2 border-[#141414] px-3 py-2 text-sm text-black focus:bg-yellow-50 focus:outline-none font-mono font-bold"
                   />
                 </div>
                 <div>
-                  <label className="text-[10px] text-gray-400 block mb-1 uppercase tracking-wider">Kinh độ L (Dec_Deg E)</label>
+                  <label className="text-[10px] text-black font-bold block mb-1 uppercase tracking-wider">Kinh độ L (Dec_Deg E)</label>
                   <input 
                     type="number" 
                     value={lonInput} 
                     onChange={e => setLonInput(e.target.value)} 
                     placeholder="Ví dụ: 106.547216" 
-                    className="w-full bg-[#161616] border border-[#444] px-3 py-2 text-sm text-[#e0e0e0] focus:border-yellow-500 focus:outline-none font-mono"
+                    className="w-full bg-white border-2 border-[#141414] px-3 py-2 text-sm text-black focus:bg-yellow-50 focus:outline-none font-mono font-bold"
                   />
                 </div>
                 <div className="pt-2">
-                  <span className="text-[10px] text-gray-500 block mb-1 uppercase tracking-wider">Chọn nhanh mốc Toạ độ Việt Nam</span>
-                  <div className="flex flex-wrap gap-2">
-                    <button onClick={() => loadExample('21.047039', '105.783661')} className="text-[10px] px-2 py-1.5 bg-yellow-500/10 border border-yellow-500/40 text-yellow-500 hover:bg-yellow-500/20 font-bold tracking-tight rounded-sm flex items-center gap-1">🇻🇳 Mốc N00 Mới (479 HQV)</button>
-                    <button onClick={() => loadExample('21.04929722', '105.80509167')} className="text-[10px] px-2 py-1.5 bg-[#222] border border-[#444] text-gray-400 hover:bg-[#333] tracking-tight rounded-sm">🇻🇳 Mốc N00 Cũ (108 HQV)</button>
-                    <button onClick={() => loadExample('10.353427', '106.547216')} className="text-[10px] px-2 py-1.5 bg-[#222] border border-[#444] text-gray-300 hover:bg-[#333] tracking-tight rounded-sm">Bến Lức / HCM</button>
-                    <button onClick={() => loadExample('21.028511', '105.854167')} className="text-[10px] px-2 py-1.5 bg-[#222] border border-[#444] text-gray-300 hover:bg-[#333] tracking-tight rounded-sm">Hồ Gươm HN</button>
-                    <button onClick={() => loadExample('16.054407', '108.202164')} className="text-[10px] px-2 py-1.5 bg-[#222] border border-[#444] text-gray-300 hover:bg-[#333] tracking-tight rounded-sm">Đà Nẵng</button>
+                  <span className="text-[10px] text-black font-bold block mb-1 uppercase tracking-wider">Chọn nhanh mốc Toạ độ Việt Nam</span>
+                  <div className="flex flex-wrap gap-2 pt-1">
+                    <button onClick={() => loadExample('21.047039', '105.783661')} className="text-[10px] px-2 py-1 bg-yellow-400 border-2 border-[#141414] text-black font-bold tracking-tight rounded-sm flex items-center gap-1 shadow-[1px_1px_0px_0px_rgba(20,20,20,1)] cursor-pointer">🇻🇳 Mốc N00 Mới (479 HQV)</button>
+                    <button onClick={() => loadExample('21.04929722', '105.80509167')} className="text-[10px] px-2 py-1 bg-stone-100 border-2 border-[#141414] text-black hover:bg-stone-200 tracking-tight rounded-sm font-bold shadow-[1px_1px_0px_0px_rgba(20,20,20,1)] cursor-pointer">🇻🇳 Mốc N00 Cũ</button>
+                    <button onClick={() => loadExample('10.353427', '106.547216')} className="text-[10px] px-2 py-1 bg-stone-50 border-2 border-[#141414] text-black hover:bg-stone-100 tracking-tight rounded-sm font-bold shadow-[1px_1px_0px_0px_rgba(20,20,20,1)] cursor-pointer">Bến Lức / HCM</button>
+                    <button onClick={() => loadExample('21.028511', '105.854167')} className="text-[10px] px-2 py-1 bg-stone-50 border-2 border-[#141414] text-black hover:bg-stone-100 tracking-tight rounded-sm font-bold shadow-[1px_1px_0px_0px_rgba(20,20,20,1)] cursor-pointer">Hồ Gươm HN</button>
+                    <button onClick={() => loadExample('16.054407', '108.202164')} className="text-[10px] px-2 py-1 bg-stone-50 border-2 border-[#141414] text-black hover:bg-stone-100 tracking-tight rounded-sm font-bold shadow-[1px_1px_0px_0px_rgba(20,20,20,1)] cursor-pointer">Đà Nẵng</button>
                   </div>
                 </div>
               </div>
             ) : (
               <div className="space-y-4">
                 <div>
-                  <label className="text-[10px] text-gray-400 block mb-1 uppercase tracking-wider">Mã / Số hiệu mảnh bản đồ</label>
+                  <label className="text-[10px] text-black font-bold block mb-1 uppercase tracking-wider">Mã / Số hiệu mảnh bản đồ</label>
                   <input 
                     type="text" 
                     value={sheetNameInput} 
                     onChange={e => setSheetNameInput(e.target.value)} 
                     placeholder="Ví dụ: 6329 hoặc E48-70" 
-                    className="w-full bg-[#161616] border border-[#444] px-3 py-2 text-sm text-[#e0e0e0] focus:border-yellow-500 focus:outline-none font-mono uppercase"
+                    className="w-full bg-white border-2 border-[#141414] px-3 py-2 text-sm text-black focus:bg-yellow-50 focus:outline-none font-mono font-bold uppercase"
                   />
                 </div>
-                <div className="text-[11px] text-gray-500 leading-relaxed font-sans">
+                <div className="text-[11px] text-gray-700 leading-relaxed font-sans bg-stone-50 border-2 border-dashed border-stone-300 p-2.5 rounded-sm">
                   Hỗ trợ định dạng:<br />
-                  - <b className="text-yellow-500 font-mono">6329</b> (1:100k quốc tế)<br />
-                  - <b className="text-yellow-500 font-mono">E48-70</b> (1:100k UTM/VN2000)<br />
-                  - <b className="text-yellow-500 font-mono">6329-A</b> (1:50k A/B/C/D)<br />
-                  - <b className="text-yellow-500 font-mono">6329-A-a</b> (1:25k a/b/c/d)<br />
-                  - <b className="text-yellow-500 font-mono">6329-A-a-1</b> (1:10k 1/2/3/4)
+                  - <b className="text-yellow-600 font-mono">6329</b> (1:100k quốc tế)<br />
+                  - <b className="text-yellow-600 font-mono">E48-70</b> (1:100k UTM/VN2000)<br />
+                  - <b className="text-yellow-600 font-mono">6329-A</b> (1:50k A/B/C/D)<br />
+                  - <b className="text-yellow-600 font-mono">6329-A-a</b> (1:25k a/b/c/d)<br />
+                  - <b className="text-yellow-600 font-mono">6329-A-a-1</b> (1:10k 1/2/3/4)
                 </div>
               </div>
             )}
 
             <button 
               onClick={handleCalculate}
-              className="w-full bg-yellow-500 hover:bg-yellow-400 text-black font-bold uppercase py-2.5 px-4 text-xs tracking-wider transition-colors mt-6 font-mono flex items-center justify-center gap-2"
+              className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold uppercase py-2.5 px-4 text-xs tracking-wider border-2 border-[#141414] shadow-[4px_4px_0px_0px_rgba(20,20,20,1)] hover:shadow-[2px_2px_0px_0px_rgba(20,20,20,1)] hover:translate-x-[2px] hover:translate-y-[2px] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all mt-6 font-mono flex items-center justify-center gap-2 cursor-pointer"
             >
               <Search className="w-4 h-4" />
               Tính toán mảnh liền
@@ -1264,8 +1264,8 @@ export default function MapSheetModule() {
           </div>
 
           {error && (
-            <div className="bg-red-500/10 border border-red-500/30 text-red-400 p-3 text-xs rounded-sm leading-relaxed">
-              {error}
+            <div className="bg-red-50 border-2 border-[#141414] text-red-700 p-3 text-xs rounded-sm leading-relaxed shadow-[2px_2px_0px_0px_rgba(20,20,20,1)] font-bold">
+              ⚠️ {error}
             </div>
           )}
         </div>
@@ -1282,53 +1282,53 @@ export default function MapSheetModule() {
                 className="space-y-6"
               >
                 {/* Header overview */}
-                <div className="bg-yellow-500/5 border border-yellow-500/20 p-4 space-y-2">
+                <div className="bg-yellow-50 border-2 border-[#141414] p-4 space-y-2 shadow-[2px_2px_0px_0px_rgba(20,20,20,1)] text-black">
                   <div className="flex flex-wrap items-center justify-between gap-4">
-                    <span className="text-xs uppercase tracking-wider text-yellow-500 font-bold flex items-center gap-1.5">
-                      <MapPin className="w-4 h-4" /> Thông tin hệ quy chiếu & lưới bao mảnh
+                    <span className="text-xs uppercase tracking-wider text-black font-bold flex items-center gap-1.5">
+                      <MapPin className="w-4 h-4 text-yellow-600" /> Thông tin hệ quy chiếu & lưới bao mảnh
                     </span>
-                    <span className="text-[11px] bg-yellow-500/10 text-yellow-500 px-2.5 py-0.5 border border-yellow-500/30">
+                    <span className="text-[11px] bg-yellow-400 text-black px-2.5 py-0.5 border-2 border-[#141414] font-bold shadow-[1px_1px_0px_0px_rgba(20,20,20,1)]">
                       Zone {result.zone} (Kinh trục {result.centralMeridian}°Đ)
                     </span>
                   </div>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs pt-2">
                     <div>
-                      <span className="text-gray-500 block text-[10px] uppercase">Vĩ độ tâm mảnh</span>
-                      <span className="font-mono text-[#e0e0e0] font-bold">{result.latitude.toFixed(6)}°</span>
+                      <span className="text-gray-700 block text-[10px] uppercase font-bold">Vĩ độ tâm mảnh</span>
+                      <span className="font-mono text-black font-bold">{result.latitude.toFixed(6)}°</span>
                     </div>
                     <div>
-                      <span className="text-gray-500 block text-[10px] uppercase">Kinh độ tâm mảnh</span>
-                      <span className="font-mono text-[#e0e0e0] font-bold">{result.longitude.toFixed(6)}°</span>
+                      <span className="text-gray-700 block text-[10px] uppercase font-bold">Kinh độ tâm mảnh</span>
+                      <span className="font-mono text-black font-bold">{result.longitude.toFixed(6)}°</span>
                     </div>
                     <div>
-                      <span className="text-gray-500 block text-[10px] uppercase">Biên trái hành lang</span>
-                      <span className="font-mono text-gray-400">{result.leftBoundary}° Đ</span>
+                      <span className="text-gray-700 block text-[10px] uppercase font-bold">Biên trái hành lang</span>
+                      <span className="font-mono text-black font-bold">{result.leftBoundary}° Đ</span>
                     </div>
                     <div>
-                      <span className="text-gray-500 block text-[10px] uppercase">Biên phải hành lang</span>
-                      <span className="font-mono text-gray-400">{result.rightBoundary}° Đ</span>
+                      <span className="text-gray-700 block text-[10px] uppercase font-bold">Biên phải hành lang</span>
+                      <span className="font-mono text-black font-bold">{result.rightBoundary}° Đ</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Chế độ xem: Thông tin mảnh (Sheet details) vs Bản đồ trực tuyến (Real-time Map) */}
-                <div className="flex border-b border-[#333] mb-4 gap-1 bg-[#111] p-1 rounded-sm">
+                <div className="flex border-b-2 border-[#141414] mb-4 gap-2 bg-stone-100 p-1 rounded-sm">
                   <button
                     onClick={() => setActiveTab('info')}
-                    className={`flex-1 sm:flex-none px-4 py-2 text-xs font-mono font-bold uppercase transition-all flex items-center justify-center gap-1.5 rounded-sm border ${
+                    className={`flex-1 sm:flex-none px-4 py-2 text-xs font-mono font-bold uppercase transition-all flex items-center justify-center gap-1.5 rounded-sm border-2 cursor-pointer ${
                       activeTab === 'info'
-                        ? 'bg-yellow-500 text-black border-yellow-500'
-                        : 'bg-transparent text-gray-400 border-transparent hover:text-white hover:bg-[#1a1a1a]'
+                        ? 'bg-yellow-400 text-black border-[#141414] shadow-[2px_2px_0px_0px_rgba(20,20,20,1)]'
+                        : 'bg-transparent text-gray-700 border-transparent hover:text-black hover:bg-stone-200'
                     }`}
                   >
                     <Layers className="w-3.5 h-3.5" /> Thông tin mảnh (Information)
                   </button>
                   <button
                     onClick={() => setActiveTab('map')}
-                    className={`flex-1 sm:flex-none px-4 py-2 text-xs font-mono font-bold uppercase transition-all flex items-center justify-center gap-1.5 rounded-sm border ${
+                    className={`flex-1 sm:flex-none px-4 py-2 text-xs font-mono font-bold uppercase transition-all flex items-center justify-center gap-1.5 rounded-sm border-2 cursor-pointer ${
                       activeTab === 'map'
-                        ? 'bg-yellow-500 text-black border-yellow-500'
-                        : 'bg-transparent text-gray-400 border-transparent hover:text-white hover:bg-[#1a1a1a]'
+                        ? 'bg-yellow-400 text-black border-[#141414] shadow-[2px_2px_0px_0px_rgba(20,20,20,1)]'
+                        : 'bg-transparent text-gray-700 border-transparent hover:text-black hover:bg-stone-200'
                     }`}
                   >
                     <Map className="w-3.5 h-3.5" /> Bản đồ VN-2000 (Map Viewer)
@@ -1339,19 +1339,19 @@ export default function MapSheetModule() {
                   <div className="space-y-4">
                     {/* Scale selector for map view if in coord_to_sheet mode */}
                     {direction === 'coord_to_sheet' && (
-                      <div className="bg-[#111] border border-[#333] p-4 rounded-sm">
-                        <h3 className="text-xs uppercase text-yellow-500 tracking-wider mb-3 font-semibold font-mono flex items-center gap-1.5">
-                          <Layers className="w-3.5 h-3.5 text-yellow-500" /> Tỉ lệ lưới chiếu (Select Visualization Scale)
+                      <div className="bg-white border-2 border-[#141414] p-4 rounded-sm shadow-[4px_4px_0px_0px_rgba(20,20,20,1)]">
+                        <h3 className="text-xs uppercase text-black tracking-wider mb-3 font-bold font-mono flex items-center gap-1.5">
+                          <Layers className="w-3.5 h-3.5 text-yellow-600" /> Tỉ lệ lưới chiếu (Select Visualization Scale)
                         </h3>
                         <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-9 gap-1.5">
                           {result.sheets.map((sh: any, idx: number) => (
                             <button
                               key={idx}
                               onClick={() => setSelectedScaleIndex(idx)}
-                              className={`px-1.5 py-2 text-[10px] font-mono border text-center transition-all ${
+                              className={`px-1.5 py-2 text-[10px] font-mono border-2 text-center transition-all cursor-pointer ${
                                 selectedScaleIndex === idx
-                                  ? 'bg-yellow-500 text-black border-yellow-500 font-bold'
-                                  : 'bg-[#161616] border-[#222] text-gray-400 hover:border-yellow-500/50 hover:text-white'
+                                  ? 'bg-yellow-400 text-black border-[#141414] font-bold shadow-[2px_2px_0px_0px_rgba(20,20,20,1)]'
+                                  : 'bg-stone-50 border-[#141414]/20 text-gray-700 hover:border-[#141414] hover:text-black'
                               }`}
                             >
                               <div className="opacity-75">{sh.scale.split(':')[1]}</div>
@@ -1371,12 +1371,12 @@ export default function MapSheetModule() {
                 ) : (
                   <>
                     {/* Tỉ lệ hiển thị màn hình (Screen Scale Controls) */}
-                    <div className="bg-[#111] border border-[#333] p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 rounded-sm">
+                    <div className="bg-white border-2 border-[#141414] p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 rounded-sm shadow-[4px_4px_0px_0px_rgba(20,20,20,1)]">
                       <div className="space-y-1">
-                        <span className="text-xs font-mono font-bold text-yellow-500 uppercase tracking-wide flex items-center gap-1.5">
-                          <Globe className="w-3.5 h-3.5 text-yellow-500" /> Chế độ hiển thị tỉ lệ mảnh (Scale Proportion Setup)
+                        <span className="text-xs font-mono font-bold text-black uppercase tracking-wide flex items-center gap-1.5">
+                          <Globe className="w-3.5 h-3.5 text-yellow-600" /> Chế độ hiển thị tỉ lệ mảnh (Scale Proportion Setup)
                         </span>
-                        <p className="text-[11px] text-gray-400 leading-normal max-w-xl">
+                        <p className="text-[11px] text-gray-700 leading-normal max-w-xl">
                           {scaleMode === 'true_scale' 
                             ? "True Screen Scale: Render using actual ground-to-screen proportions based on map scale and current visualization zoom level." 
                             : "Fit to Window: Normalize the frame size to fit viewport boundary while preserving original aspect ratio."}
@@ -1385,27 +1385,27 @@ export default function MapSheetModule() {
                       <div className="flex gap-2.5 self-start md:self-auto shrink-0">
                         <button
                           onClick={() => setScaleMode('true_scale')}
-                          className={`px-3 py-2 text-xs font-bold font-mono transition-all flex items-center gap-2 rounded-sm border ${
+                          className={`px-3 py-2 text-xs font-bold font-mono transition-all flex items-center gap-2 rounded-sm border-2 cursor-pointer ${
                             scaleMode === 'true_scale'
-                              ? 'bg-yellow-500/15 text-yellow-500 border-yellow-500/55'
-                              : 'bg-[#161616] text-gray-400 border-[#222] hover:text-[#e0e0e0] hover:border-[#333]'
+                              ? 'bg-yellow-400 text-black border-[#141414] shadow-[2px_2px_0px_0px_rgba(20,20,20,1)]'
+                              : 'bg-stone-100 text-gray-700 border-stone-300 hover:text-black hover:border-[#141414]'
                           }`}
                         >
-                          <div className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center ${scaleMode === 'true_scale' ? 'border-yellow-500' : 'border-gray-500'}`}>
-                            {scaleMode === 'true_scale' && <div className="w-1.5 h-1.5 rounded-full bg-yellow-500" />}
+                          <div className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center ${scaleMode === 'true_scale' ? 'border-[#141414]' : 'border-gray-500'}`}>
+                            {scaleMode === 'true_scale' && <div className="w-1.5 h-1.5 rounded-full bg-black" />}
                           </div>
                           True Screen Scale
                         </button>
                         <button
                           onClick={() => setScaleMode('fit_window')}
-                          className={`px-3 py-2 text-xs font-bold font-mono transition-all flex items-center gap-2 rounded-sm border ${
+                          className={`px-3 py-2 text-xs font-bold font-mono transition-all flex items-center gap-2 rounded-sm border-2 cursor-pointer ${
                             scaleMode === 'fit_window'
-                              ? 'bg-yellow-500/15 text-yellow-500 border-yellow-500/55'
-                              : 'bg-[#161616] text-gray-400 border-[#222] hover:text-[#e0e0e0] hover:border-[#333]'
+                              ? 'bg-yellow-400 text-black border-[#141414] shadow-[2px_2px_0px_0px_rgba(20,20,20,1)]'
+                              : 'bg-stone-100 text-gray-700 border-stone-300 hover:text-black hover:border-[#141414]'
                           }`}
                         >
-                          <div className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center ${scaleMode === 'fit_window' ? 'border-yellow-500' : 'border-gray-500'}`}>
-                            {scaleMode === 'fit_window' && <div className="w-1.5 h-1.5 rounded-full bg-yellow-500" />}
+                          <div className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center ${scaleMode === 'fit_window' ? 'border-[#141414]' : 'border-gray-500'}`}>
+                            {scaleMode === 'fit_window' && <div className="w-1.5 h-1.5 rounded-full bg-black" />}
                           </div>
                           Fit to Window
                         </button>
@@ -1414,7 +1414,7 @@ export default function MapSheetModule() {
 
                     {direction === 'coord_to_sheet' ? (
                       <div>
-                        <h3 className="text-xs uppercase text-yellow-500 tracking-wider mb-3 font-bold">
+                        <h3 className="text-xs uppercase text-black border-b-2 border-[#141414] pb-1 tracking-wider mb-3 font-bold">
                           Hệ thống mảnh phân cấp (Từ 1:1.000.000 đến 1:2.000)
                         </h3>
                         <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-9 gap-1.5 mb-4">
@@ -1422,10 +1422,10 @@ export default function MapSheetModule() {
                             <button
                               key={idx}
                               onClick={() => setSelectedScaleIndex(idx)}
-                              className={`px-1.5 py-2 text-[10px] font-mono border text-center transition-all ${
+                              className={`px-1.5 py-2 text-[10px] font-mono border-2 text-center transition-all cursor-pointer ${
                                 selectedScaleIndex === idx
-                                  ? 'bg-yellow-500 text-black border-yellow-500 font-bold'
-                                  : 'bg-[#111] border-[#333] text-gray-400 hover:border-yellow-500/50 hover:text-white'
+                                  ? 'bg-yellow-400 text-black border-[#141414] font-bold shadow-[2px_2px_0px_0px_rgba(20,20,20,1)]'
+                                  : 'bg-stone-50 border-[#141414]/20 text-gray-700 hover:border-[#141414] hover:text-black'
                               }`}
                             >
                               <div className="opacity-75">{sh.scale.split(':')[1]}</div>
@@ -1435,49 +1435,49 @@ export default function MapSheetModule() {
                         </div>
 
                         {/* Detailed selected scale */}
-                        <div className="bg-[#111] border border-[#333] p-4">
-                          <div className="flex items-center justify-between border-b border-[#222] pb-3 mb-4">
+                        <div className="bg-white border-2 border-[#141414] p-4 shadow-[4px_4px_0px_0px_rgba(20,20,20,1)] text-black">
+                          <div className="flex items-center justify-between border-b-2 border-[#141414] pb-3 mb-4">
                             <div>
-                              <span className="text-[10px] text-gray-500 uppercase tracking-wider">Tỷ lệ được chọn</span>
-                              <h4 className="text-sm font-bold text-[#e0e0e0]">{result.sheets[selectedScaleIndex].scale}</h4>
+                              <span className="text-[10px] text-gray-700 font-bold uppercase tracking-wider">Tỷ lệ được chọn</span>
+                              <h4 className="text-sm font-bold text-black">{result.sheets[selectedScaleIndex].scale}</h4>
                             </div>
                             <div className="text-right">
-                              <span className="text-[10px] text-gray-500 uppercase tracking-wider block">Ký hiệu mảnh đầy đủ</span>
-                              <span className="font-bold text-yellow-500 font-mono text-sm">{result.sheets[selectedScaleIndex].name}</span>
+                              <span className="text-[10px] text-gray-700 font-bold uppercase tracking-wider block">Ký hiệu mảnh đầy đủ</span>
+                              <span className="font-bold text-yellow-600 font-mono text-sm">{result.sheets[selectedScaleIndex].name}</span>
                               {result.sheets[selectedScaleIndex].utmEquivalent && (
-                                <span className="text-[10px] text-gray-400 block font-mono">({result.sheets[selectedScaleIndex].utmEquivalent})</span>
+                                <span className="text-[10px] text-gray-600 block font-mono">({result.sheets[selectedScaleIndex].utmEquivalent})</span>
                               )}
                             </div>
                           </div>
 
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {/* Map Boundary Schema Visualizer */}
-                            <div className="bg-[#161616] border border-[#222] p-4 relative flex flex-col items-center justify-center min-h-[300px] pb-6">
-                              <span className="absolute top-2 left-2 text-[9px] text-yellow-500 font-mono uppercase font-bold tracking-wider">Phác họa mảnh</span>
+                            <div className="bg-stone-50 border-2 border-[#141414] p-4 relative flex flex-col items-center justify-center min-h-[300px] pb-6 rounded-sm shadow-[2px_2px_0px_0px_rgba(20,20,20,1)] text-black">
+                              <span className="absolute top-2 left-2 text-[9px] text-yellow-600 font-mono uppercase font-bold tracking-wider">Phác họa mảnh</span>
                               
                               {/* Inner Map Quadrant Drawing */}
                               <motion.div 
                                 animate={{ width: frameWidth, height: frameHeight }}
                                 transition={{ type: "spring", stiffness: 120, damping: 20 }}
-                                className="border border-gray-600 relative flex items-center justify-center bg-[#1c1c1c]/50 my-6"
+                                className="border-2 border-[#141414] relative flex items-center justify-center bg-white my-6"
                               >
-                                <div className="absolute -top-5 left-1/2 -translate-x-1/2 text-[9px] font-mono font-semibold text-gray-400 whitespace-nowrap">
+                                <div className="absolute -top-5 left-1/2 -translate-x-1/2 text-[9px] font-mono font-bold text-black whitespace-nowrap">
                                   B_Max: {result.sheets[selectedScaleIndex].bounds.latMax.toFixed(5)}°
                                 </div>
-                                <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 text-[9px] font-mono font-semibold text-gray-400 whitespace-nowrap">
+                                <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 text-[9px] font-mono font-bold text-black whitespace-nowrap">
                                   B_Min: {result.sheets[selectedScaleIndex].bounds.latMin.toFixed(5)}°
                                 </div>
-                                <div className="absolute top-1/2 -left-12 -translate-y-1/2 rotate-90 text-[9px] font-mono font-semibold text-gray-400 whitespace-nowrap">
+                                <div className="absolute top-1/2 -left-12 -translate-y-1/2 rotate-90 text-[9px] font-mono font-bold text-black whitespace-nowrap">
                                   L_Min: {result.sheets[selectedScaleIndex].bounds.lonMin.toFixed(5)}°
                                 </div>
-                                <div className="absolute top-1/2 -right-12 -translate-y-1/2 -rotate-90 text-[9px] font-mono font-semibold text-gray-400 whitespace-nowrap">
+                                <div className="absolute top-1/2 -right-12 -translate-y-1/2 -rotate-90 text-[9px] font-mono font-bold text-black whitespace-nowrap">
                                   L_Max: {result.sheets[selectedScaleIndex].bounds.lonMax.toFixed(5)}°
                                 </div>
 
                                 {/* Point representation */}
                                 {direction === 'coord_to_sheet' && (
                                   <motion.div 
-                                    className="absolute w-3 h-3 bg-red-500 rounded-full border border-white animate-pulse"
+                                    className="absolute w-3 h-3 bg-red-500 rounded-full border border-white animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.8)]"
                                     animate={{
                                       left: `${relativeX * 100}%`,
                                       bottom: `${relativeY * 100}%`,
@@ -1492,30 +1492,30 @@ export default function MapSheetModule() {
 
                                 {/* Info inside the box */}
                                 <div className="text-center font-mono p-1">
-                                  <div className="text-yellow-500 font-bold text-xs truncate max-w-[150px]">{result.sheets[selectedScaleIndex].name}</div>
-                                  <div className="text-[9px] text-gray-400 mt-1 uppercase">Center</div>
-                                  <div className="text-[9px] text-[#e0e0e0] font-mono truncate max-w-[150px]">
+                                  <div className="text-yellow-600 font-bold text-xs truncate max-w-[150px]">{result.sheets[selectedScaleIndex].name}</div>
+                                  <div className="text-[9px] text-gray-500 mt-1 uppercase font-bold">Center</div>
+                                  <div className="text-[9px] text-black font-mono font-bold truncate max-w-[150px]">
                                     {result.sheets[selectedScaleIndex].center.lat.toFixed(5)}°, {result.sheets[selectedScaleIndex].center.lon.toFixed(5)}°
                                   </div>
                                 </div>
                               </motion.div>
 
                               {/* Ground Dimensions and Zoom Recommendation */}
-                              <div className="mt-4 pt-3 border-t border-[#222] w-full text-left space-y-2.5">
-                                <div className="text-[10px] text-yellow-500 font-mono uppercase font-bold tracking-wider">
+                              <div className="mt-4 pt-3 border-t-2 border-[#141414] w-full text-left space-y-2.5">
+                                <div className="text-[10px] text-yellow-600 font-mono uppercase font-bold tracking-wider">
                                   Approximate Ground Dimensions:
                                 </div>
-                                <div className="grid grid-cols-1 gap-1 text-[11px] font-mono text-gray-300">
-                                  <div>• North-South: <span className="text-[#f5f5f5] font-bold">{nsDist.toFixed(1)} m</span></div>
-                                  <div>• East-West: <span className="text-[#f5f5f5] font-bold">{ewDist.toFixed(1)} m</span></div>
-                                  <div>• Area: <span className="text-[#f5f5f5] font-bold">{area.toFixed(4)} km²</span></div>
+                                <div className="grid grid-cols-1 gap-1 text-[11px] font-mono text-black">
+                                  <div>• North-South: <span className="text-black font-bold">{nsDist.toFixed(1)} m</span></div>
+                                  <div>• East-West: <span className="text-black font-bold">{ewDist.toFixed(1)} m</span></div>
+                                  <div>• Area: <span className="text-black font-bold">{area.toFixed(4)} km²</span></div>
                                 </div>
-                                <div className="text-[10px] text-gray-400 border-t border-[#222]/50 pt-2 font-mono">
+                                <div className="text-[10px] text-black border-t-2 border-dashed border-[#141414]/50 pt-2 font-mono">
                                   Recommended observation zoom:<br />
-                                  <span className="text-gray-500">Google Maps / OSM Zoom ≈ </span>
-                                  <span className="text-yellow-500 font-bold">{zoomLevel}</span>
+                                  <span className="text-gray-700">Google Maps / OSM Zoom ≈ </span>
+                                  <span className="text-yellow-600 font-bold">{zoomLevel}</span>
                                   {scaleMode === 'true_scale' && showScaleWarning && (
-                                    <div className="mt-2 text-[10px] text-yellow-500 font-mono tracking-tight bg-yellow-500/10 p-2 border border-yellow-500/25 rounded-sm text-center leading-normal">
+                                    <div className="mt-2 text-[10px] text-yellow-700 font-mono tracking-tight bg-yellow-50 p-2 border-2 border-[#141414] rounded-sm text-center leading-normal shadow-[1px_1px_0px_0px_rgba(20,20,20,1)]">
                                       ⚠️ Displayed at reduced scale for screen fitting.
                                     </div>
                                   )}
@@ -1525,11 +1525,11 @@ export default function MapSheetModule() {
 
                             {/* Detailed analytical computation text */}
                             <div className="space-y-4">
-                              <h5 className="text-xs text-gray-400 uppercase tracking-widest font-mono font-bold border-b border-[#222] pb-1">Giải giải toán học</h5>
-                              <div className="space-y-2 text-xs leading-relaxed font-sans text-gray-300">
+                              <h5 className="text-xs text-black uppercase tracking-widest font-mono font-bold border-b-2 border-[#141414] pb-1">Giải pháp toán học</h5>
+                              <div className="space-y-2 text-xs leading-relaxed font-sans text-gray-800">
                                 {result.sheets[selectedScaleIndex].details.map((detail: string, dIdx: number) => (
                                   <div key={dIdx} className="flex gap-2 items-start font-mono text-[11px] leading-relaxed">
-                                    <span className="text-yellow-500">▶</span>
+                                    <span className="text-yellow-600">▶</span>
                                     <span>{detail}</span>
                                   </div>
                                 ))}
@@ -1539,39 +1539,39 @@ export default function MapSheetModule() {
                         </div>
                       </div>
                     ) : (
-                      <div className="bg-[#111] border border-[#333] p-4">
-                        <div className="flex items-center justify-between border-b border-[#222] pb-3 mb-4">
+                      <div className="bg-white border-2 border-[#141414] p-4 shadow-[4px_4px_0px_0px_rgba(20,20,20,1)] text-black">
+                        <div className="flex items-center justify-between border-b-2 border-[#141414] pb-3 mb-4">
                           <div>
-                            <span className="text-[10px] text-gray-500 uppercase tracking-wider">Loại bản đồ phân tích</span>
-                            <h4 className="text-sm font-bold text-[#e0e0e0]">{result.sheets[0].scale}</h4>
+                            <span className="text-[10px] text-gray-700 font-bold uppercase tracking-wider">Loại bản đồ phân tích</span>
+                            <h4 className="text-sm font-bold text-black">{result.sheets[0].scale}</h4>
                           </div>
                           <div className="text-right">
-                            <span className="text-[10px] text-gray-500 uppercase tracking-wider block">Ký tự nguyên bản</span>
-                            <span className="font-bold text-yellow-500 font-mono text-sm">{result.sheets[0].name}</span>
+                            <span className="text-[10px] text-gray-700 font-bold uppercase tracking-wider block">Ký tự nguyên bản</span>
+                            <span className="font-bold text-yellow-600 font-mono text-sm">{result.sheets[0].name}</span>
                           </div>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                          <div className="bg-[#161616] border border-[#222] p-4 relative flex flex-col items-center justify-center min-h-[300px] pb-6">
-                            <span className="absolute top-2 left-2 text-[9px] text-yellow-500 font-mono uppercase font-bold tracking-wider">Phác họa tọa độ góc</span>
+                          <div className="bg-stone-50 border-2 border-[#141414] p-4 relative flex flex-col items-center justify-center min-h-[300px] pb-6 rounded-sm shadow-[2px_2px_0px_0px_rgba(20,20,20,1)] text-black">
+                            <span className="absolute top-2 left-2 text-[9px] text-yellow-600 font-mono uppercase font-bold tracking-wider">Phác họa tọa độ góc</span>
                             
                             {/* Inner Map Quadrant Drawing */}
                             <motion.div 
                               animate={{ width: frameWidth, height: frameHeight }}
                               transition={{ type: "spring", stiffness: 120, damping: 20 }}
-                              className="border border-gray-600 relative flex items-center justify-center bg-[#1c1c1c]/50 my-6"
+                              className="border-2 border-[#141414] relative flex items-center justify-center bg-white my-6"
                             >
                               {/* Point indicators of 4 corners */}
-                              <div className="absolute -top-5 left-1/2 -translate-x-1/2 text-[9px] font-mono text-gray-400 whitespace-nowrap">
+                              <div className="absolute -top-5 left-1/2 -translate-x-1/2 text-[9px] font-mono font-bold text-black whitespace-nowrap">
                                 B_Max: {result.sheets[0].bounds.latMax.toFixed(5)}°
                               </div>
-                              <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 text-[9px] font-mono text-gray-400 whitespace-nowrap">
+                              <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 text-[9px] font-mono font-bold text-black whitespace-nowrap">
                                 B_Min: {result.sheets[0].bounds.latMin.toFixed(5)}°
                               </div>
-                              <div className="absolute top-1/2 -left-12 -translate-y-1/2 rotate-90 text-[9px] font-mono text-gray-400 whitespace-nowrap">
+                              <div className="absolute top-1/2 -left-12 -translate-y-1/2 rotate-90 text-[9px] font-mono font-bold text-black whitespace-nowrap">
                                 L_Min: {result.sheets[0].bounds.lonMin.toFixed(5)}°
                               </div>
-                              <div className="absolute top-1/2 -right-12 -translate-y-1/2 -rotate-90 text-[9px] font-mono text-gray-400 whitespace-nowrap">
+                              <div className="absolute top-1/2 -right-12 -translate-y-1/2 -rotate-90 text-[9px] font-mono font-bold text-black whitespace-nowrap">
                                 L_Max: {result.sheets[0].bounds.lonMax.toFixed(5)}°
                               </div>
 
@@ -1590,32 +1590,32 @@ export default function MapSheetModule() {
                               />
 
                               <div className="text-center font-mono p-1">
-                                <div className="text-yellow-500 font-medium text-xs">TRUNG TÂM</div>
-                                <div className="text-[10px] text-[#e0e0e0] mt-0.5 font-bold truncate max-w-[150px]">
+                                <div className="text-yellow-600 font-bold text-xs">TRUNG TÂM</div>
+                                <div className="text-[10px] text-black mt-0.5 font-bold truncate max-w-[150px]">
                                   {result.sheets[0].center.lat.toFixed(5)}°B
                                 </div>
-                                <div className="text-[10px] text-[#e0e0e0] font-bold truncate max-w-[150px]">
+                                <div className="text-[10px] text-black font-bold truncate max-w-[150px]">
                                   {result.sheets[0].center.lon.toFixed(5)}°Đ
                                 </div>
                               </div>
                             </motion.div>
 
                             {/* Ground Dimensions and Zoom Recommendation */}
-                            <div className="mt-4 pt-3 border-t border-[#222] w-full text-left space-y-2.5">
-                              <div className="text-[10px] text-yellow-500 font-mono uppercase font-bold tracking-wider">
+                            <div className="mt-4 pt-3 border-t-2 border-[#141414] w-full text-left space-y-2.5">
+                              <div className="text-[10px] text-yellow-600 font-mono uppercase font-bold tracking-wider">
                                 Approximate Ground Dimensions:
                               </div>
-                              <div className="grid grid-cols-1 gap-1 text-[11px] font-mono text-gray-300">
-                                <div>• North-South: <span className="text-[#f5f5f5] font-bold">{nsDist.toFixed(1)} m</span></div>
-                                <div>• East-West: <span className="text-[#f5f5f5] font-bold">{ewDist.toFixed(1)} m</span></div>
-                                <div>• Area: <span className="text-[#f5f5f5] font-bold">{area.toFixed(4)} km²</span></div>
+                              <div className="grid grid-cols-1 gap-1 text-[11px] font-mono text-black">
+                                <div>• North-South: <span className="text-black font-bold">{nsDist.toFixed(1)} m</span></div>
+                                <div>• East-West: <span className="text-black font-bold">{ewDist.toFixed(1)} m</span></div>
+                                <div>• Area: <span className="text-black font-bold">{area.toFixed(4)} km²</span></div>
                               </div>
-                              <div className="text-[10px] text-gray-400 border-t border-[#222]/50 pt-2 font-mono">
+                              <div className="text-[10px] text-black border-t-2 border-dashed border-[#141414]/50 pt-2 font-mono">
                                 Recommended observation zoom:<br />
-                                <span className="text-gray-500">Google Maps / OSM Zoom ≈ </span>
-                                <span className="text-yellow-500 font-bold">{zoomLevel}</span>
+                                <span className="text-gray-700">Google Maps / OSM Zoom ≈ </span>
+                                <span className="text-yellow-600 font-bold">{zoomLevel}</span>
                                 {scaleMode === 'true_scale' && showScaleWarning && (
-                                  <div className="mt-2 text-[10px] text-yellow-500 font-mono tracking-tight bg-yellow-500/10 p-2 border border-yellow-500/25 rounded-sm text-center leading-normal">
+                                  <div className="mt-2 text-[10px] text-yellow-700 font-mono tracking-tight bg-yellow-50 p-2 border-2 border-[#141414] rounded-sm text-center leading-normal shadow-[1px_1px_0px_0px_rgba(20,20,20,1)]">
                                     ⚠️ Displayed at reduced scale for screen fitting.
                                   </div>
                                 )}
@@ -1624,28 +1624,28 @@ export default function MapSheetModule() {
                           </div>
 
                           <div className="space-y-4">
-                            <h5 className="text-xs text-gray-400 uppercase tracking-widest font-mono font-bold border-b border-[#222] pb-1">Tọa độ 4 góc (Độ thập phân)</h5>
+                            <h5 className="text-xs text-black uppercase tracking-widest font-mono font-bold border-b-2 border-[#141414] pb-1">Tọa độ 4 góc (Độ thập phân)</h5>
                             <div className="space-y-2.5 font-mono text-xs">
-                              <div className="bg-[#161616] p-2 border border-[#222] flex justify-between">
-                                <span className="text-yellow-500 uppercase font-bold">Tây Nam (SW)</span>
-                                <span className="font-bold text-gray-300">{result.sheets[0].bounds.latMin.toFixed(6)}°, {result.sheets[0].bounds.lonMin.toFixed(6)}°</span>
+                              <div className="bg-stone-50 p-2 border-2 border-[#141414] flex justify-between rounded-sm shadow-[1px_1px_0px_0px_rgba(20,20,20,1)]">
+                                <span className="text-yellow-600 uppercase font-bold">Tây Nam (SW)</span>
+                                <span className="font-bold text-black">{result.sheets[0].bounds.latMin.toFixed(6)}°, {result.sheets[0].bounds.lonMin.toFixed(6)}°</span>
                               </div>
-                              <div className="bg-[#161616] p-2 border border-[#222] flex justify-between">
-                                <span className="text-yellow-500 uppercase font-bold">Đông Nam (SE)</span>
-                                <span className="font-bold text-gray-300">{result.sheets[0].bounds.latMin.toFixed(6)}°, {result.sheets[0].bounds.lonMax.toFixed(6)}°</span>
+                              <div className="bg-stone-50 p-2 border-2 border-[#141414] flex justify-between rounded-sm shadow-[1px_1px_0px_0px_rgba(20,20,20,1)]">
+                                <span className="text-yellow-600 uppercase font-bold">Đông Nam (SE)</span>
+                                <span className="font-bold text-black">{result.sheets[0].bounds.latMin.toFixed(6)}°, {result.sheets[0].bounds.lonMax.toFixed(6)}°</span>
                               </div>
-                              <div className="bg-[#161616] p-2 border border-[#222] flex justify-between">
-                                <span className="text-yellow-500 uppercase font-bold">Tây Bắc (NW)</span>
-                                <span className="font-bold text-gray-300">{result.sheets[0].bounds.latMax.toFixed(6)}°, {result.sheets[0].bounds.lonMin.toFixed(6)}°</span>
+                              <div className="bg-stone-50 p-2 border-2 border-[#141414] flex justify-between rounded-sm shadow-[1px_1px_0px_0px_rgba(20,20,20,1)]">
+                                <span className="text-yellow-600 uppercase font-bold">Tây Bắc (NW)</span>
+                                <span className="font-bold text-black">{result.sheets[0].bounds.latMax.toFixed(6)}°, {result.sheets[0].bounds.lonMin.toFixed(6)}°</span>
                               </div>
-                              <div className="bg-[#161616] p-2 border border-[#222] flex justify-between">
-                                <span className="text-yellow-500 uppercase font-bold">Đông Bắc (NE)</span>
-                                <span className="font-bold text-gray-300">{result.sheets[0].bounds.latMax.toFixed(6)}°, {result.sheets[0].bounds.lonMax.toFixed(6)}°</span>
+                              <div className="bg-stone-50 p-2 border-2 border-[#141414] flex justify-between rounded-sm shadow-[1px_1px_0px_0px_rgba(20,20,20,1)]">
+                                <span className="text-yellow-600 uppercase font-bold">Đông Bắc (NE)</span>
+                                <span className="font-bold text-black">{result.sheets[0].bounds.latMax.toFixed(6)}°, {result.sheets[0].bounds.lonMax.toFixed(6)}°</span>
                               </div>
                             </div>
 
-                            <div className="bg-yellow-500/5 p-3 border border-yellow-500/10 text-[11px] text-gray-400 leading-relaxed font-sans">
-                              📌 Kinh tuyến trục múi chiếu của mảnh này là <span className="text-yellow-500 font-bold">{result.centralMeridian}°Đ</span>. Bạn có thể sử dụng dữ liệu kinh vĩ độ này để chuyển đổi sang tọa dộ góc phẳng VN2000 (X, Y) mét bằng công cụ trong thẻ <span className="text-[#e2e2e2] font-bold">Vietnam Pro</span>.
+                            <div className="bg-yellow-50 p-3 border-2 border-[#141414] text-[11px] text-black leading-relaxed font-sans shadow-[2px_2px_0px_0px_rgba(20,20,20,1)]">
+                              📌 Kinh tuyến trục múi chiếu của mảnh này là <span className="text-yellow-600 font-bold">{result.centralMeridian}°Đ</span>. Bạn có thể sử dụng dữ liệu kinh vĩ độ này để chuyển đổi sang tọa dộ góc phẳng VN2000 (X, Y) mét bằng công cụ trong thẻ <span className="text-black font-bold">Vietnam Pro</span>.
                             </div>
                           </div>
                         </div>
@@ -1655,10 +1655,10 @@ export default function MapSheetModule() {
                 )}
               </motion.div>
             ) : (
-              <div className="bg-[#111] border border-[#333] h-[340px] flex flex-col items-center justify-center text-center text-gray-500 py-10 px-4 rounded-sm">
-                <Layers className="w-16 h-16 text-gray-700 mb-4 stroke-[1.5]" />
-                <h3 className="text-xs uppercase font-mono tracking-widest text-gray-400 font-bold">Chưa có kết quả phân tích</h3>
-                <p className="text-xs max-w-md mt-2 leading-relaxed">
+              <div className="bg-stone-50 border-2 border-[#141414] h-[340px] flex flex-col items-center justify-center text-center text-gray-700 py-10 px-4 rounded-sm shadow-[4px_4px_0px_0px_rgba(20,20,20,1)]">
+                <Layers className="w-16 h-16 text-stone-400 mb-4 stroke-[1.5]" />
+                <h3 className="text-xs uppercase font-mono tracking-widest text-black font-bold">Chưa có kết quả phân tích</h3>
+                <p className="text-xs max-w-md mt-2 leading-relaxed text-gray-700">
                   Cập nhật tọa độ địa lý hoặc mã danh pháp mảnh bản đồ VN-2000 của bạn bên trái và nhấn nút tính toán để phân tích chi tiết.
                 </p>
               </div>

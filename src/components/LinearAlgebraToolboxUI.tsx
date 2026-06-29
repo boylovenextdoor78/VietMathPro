@@ -1421,8 +1421,8 @@ export function LinearAlgebraToolboxUI() {
           VECTOR TAB VIEW
           ===================================================================== */}
       {activeTab === 'vector' && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 text-[#141414]">
-          <div className="lg:col-span-12 xl:col-span-10 space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 text-[#141414]">
+          <div className="lg:col-span-2 space-y-6">
             
             {/* Dimension Selection and Control Panel */}
             <div className="bg-white border-2 border-[#141414] rounded-xl p-6 space-y-4 shadow-[4px_4px_0px_0px_rgba(20,20,20,1)]">
@@ -1953,7 +1953,7 @@ export function LinearAlgebraToolboxUI() {
           </div>
 
           {/* Outputs */}
-          <div className="space-y-6 lg:col-span-12 xl:col-span-2">
+          <div className="space-y-6 lg:col-span-1">
             <div className="bg-white border-2 border-[#141414] rounded-xl p-4 min-h-[400px] flex flex-col justify-between shadow-[3px_3px_0px_0px_rgba(20,20,20,1)] hover:shadow-[5px_5px_0px_0px_rgba(20,20,20,1)] transition-all">
               <div className="space-y-3">
                 <div className="flex justify-between items-center border-b border-[#141414]/15 pb-2">

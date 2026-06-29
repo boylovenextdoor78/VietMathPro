@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { Crosshair, AlertTriangle, Plus, Trash2, ArrowRight, CheckCircle2, Save } from 'lucide-react';
 import Decimal from 'decimal.js';
 import { useProject } from './ProjectContext';
@@ -215,22 +215,22 @@ export default function ForwardModule() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-4 mb-6 bg-[#2a2a2a] p-3 rounded-sm">
+    <div className="space-y-6 text-black">
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-6 bg-stone-100 p-3 rounded-sm border-2 border-[#141414] shadow-[2px_2px_0px_0px_rgba(20,20,20,1)]">
         <div className="flex items-center gap-4">
-          <AlertTriangle className="w-5 h-5 text-yellow-500" />
-          <div className="flex items-center gap-2 text-sm text-gray-300">
+          <AlertTriangle className="w-5 h-5 text-yellow-600" />
+          <div className="flex items-center gap-2 text-sm text-black font-bold">
             <span>Tolerance (M) Threshold:</span>
-            <input type="number" value={tolerance} onChange={(e) => setTolerance(e.target.value)} className="bg-[#111] border border-[#444] px-2 py-1 w-20 text-yellow-500 text-center focus:outline-none focus:border-yellow-500" />
+            <input type="number" value={tolerance} onChange={(e) => setTolerance(e.target.value)} className="bg-white border-2 border-[#141414] px-2 py-1 w-20 text-yellow-600 text-center focus:outline-none focus:bg-yellow-50" />
             <span>mm</span>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <label className="text-xs text-gray-400 uppercase tracking-wider">Precision Mode</label>
+          <label className="text-xs text-black uppercase tracking-wider font-bold">Precision Mode</label>
           <select 
             value={precisionMode} 
             onChange={(e) => setPrecisionMode(e.target.value as any)}
-            className="bg-[#111] border border-[#444] text-xs text-yellow-500 px-2 py-1 focus:outline-none focus:border-yellow-500"
+            className="bg-white border-2 border-[#141414] text-xs text-black font-bold px-2 py-1 focus:outline-none focus:bg-yellow-50"
           >
             <option value="standard">Standard (0.001m)</option>
             <option value="high">High (0.0001m)</option>
@@ -242,101 +242,129 @@ export default function ForwardModule() {
 
       <div className="space-y-6">
         {stations.map((station, index) => (
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} key={station.id} className="bg-[#222] border border-[#333] rounded-sm overflow-hidden">
-            <div className="bg-[#2a2a2a] p-3 flex justify-between items-center border-b border-[#333]">
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} key={station.id} className="bg-white border-2 border-[#141414] rounded-sm overflow-hidden shadow-[4px_4px_0px_0px_rgba(20,20,20,1)]">
+            <div className="bg-stone-100 p-3 flex justify-between items-center border-b-2 border-[#141414]">
               <div className="flex items-center gap-3">
-                <div className="bg-yellow-500 text-black font-bold px-2 py-1 text-xs">STN {index + 1}</div>
-                <span className="text-sm text-gray-300">OCC: {station.occupied.name} | BS: {station.backsight.name}</span>
+                <div className="bg-yellow-400 text-black font-bold px-2 py-1 text-xs border-2 border-[#141414]">STN {index + 1}</div>
+                <span className="text-sm text-black font-bold">OCC: {station.occupied.name} | BS: {station.backsight.name}</span>
               </div>
               {index > 0 && (
-                <button onClick={() => removeStation(station.id)} className="text-red-400 hover:text-red-300"><Trash2 className="w-4 h-4" /></button>
+                <button onClick={() => removeStation(station.id)} className="text-red-600 hover:text-red-800 cursor-pointer"><Trash2 className="w-4 h-4" /></button>
               )}
             </div>
 
-            <div className="p-4 grid grid-cols-1 lg:grid-cols-12 gap-6 text-gray-300">
-              <div className="lg:col-span-4 space-y-4 border-r border-[#333] pr-6">
-                <h3 className="text-xs uppercase text-gray-400 font-bold tracking-wider mb-3">Base Coordinates</h3>
+            <div className="p-4 grid grid-cols-1 xl:grid-cols-12 gap-6 text-black bg-white">
+              <div className="xl:col-span-4 space-y-4 border-b-2 xl:border-b-0 xl:border-r-2 border-[#141414] pb-6 xl:pb-0 pr-0 xl:pr-6">
+                <h3 className="text-xs uppercase text-black font-bold tracking-wider mb-3">Base Coordinates</h3>
                 <div className="space-y-2">
-                  <div className="flex justify-between items-center text-xs text-yellow-500">
-                    <span className="flex items-center gap-1">
+                  <div className="flex justify-between items-center text-xs text-black font-bold max-w-[260px]">
+                    <span className="flex items-center gap-1 text-[11px]">
                       Backsight (BS)
-                      {isControlPoint(station.backsight.name) && <span className="w-3 h-3 bg-yellow-500 border border-black inline-block ml-1" style={{ clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)' }} title="Control Point"></span>}
+                      {isControlPoint(station.backsight.name) && <span className="w-3 h-3 bg-yellow-400 border border-[#141414] inline-block ml-1" style={{ clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)' }} title="Control Point"></span>}
                     </span>
-                    <input type="text" value={station.backsight.name} onChange={e => updateStation(station.id, 'backsight.name', e.target.value)} className="bg-transparent border-b border-[#444] w-12 text-right focus:outline-none focus:border-yellow-500" />
+                    <input type="text" value={station.backsight.name} onChange={e => updateStation(station.id, 'backsight.name', e.target.value)} className="bg-transparent border-b-2 border-[#141414] w-12 text-right focus:outline-none focus:bg-yellow-50 font-bold" />
                   </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <div><label className="text-[10px] text-gray-500">X (m)</label><input type="number" value={station.backsight.x} onChange={e => updateStation(station.id, 'backsight.x', e.target.value)} className="w-full bg-[#111] border border-[#444] px-2 py-1 text-sm focus:outline-none focus:border-yellow-500" placeholder="0.000" /></div>
-                    <div><label className="text-[10px] text-gray-500">Y (m)</label><input type="number" value={station.backsight.y} onChange={e => updateStation(station.id, 'backsight.y', e.target.value)} className="w-full bg-[#111] border border-[#444] px-2 py-1 text-sm focus:outline-none focus:border-yellow-500" placeholder="0.000" /></div>
+                  <div className="flex gap-2 max-w-[260px]">
+                    <div className="w-1/2"><label className="text-[9px] text-gray-500 font-bold block mb-0.5">X (m)</label><input type="number" value={station.backsight.x} onChange={e => updateStation(station.id, 'backsight.x', e.target.value)} className="w-full bg-white border-2 border-[#141414] px-1.5 py-0.5 text-xs font-bold text-black focus:outline-none focus:bg-yellow-50" placeholder="0.000" /></div>
+                    <div className="w-1/2"><label className="text-[9px] text-gray-500 font-bold block mb-0.5">Y (m)</label><input type="number" value={station.backsight.y} onChange={e => updateStation(station.id, 'backsight.y', e.target.value)} className="w-full bg-white border-2 border-[#141414] px-1.5 py-0.5 text-xs font-bold text-black focus:outline-none focus:bg-yellow-50" placeholder="0.000" /></div>
                   </div>
                 </div>
                 <div className="space-y-2 pt-2">
-                  <div className="flex justify-between items-center text-xs text-yellow-500">
+                  <div className="flex justify-between items-center text-xs text-black font-bold max-w-[260px]">
                     <div className="flex items-center gap-2">
-                      <span className="flex items-center gap-1">
+                      <span className="flex items-center gap-1 text-[11px]">
                         Occupied (OCC)
-                        {isControlPoint(station.occupied.name) && <span className="w-3 h-3 bg-yellow-500 border border-black inline-block ml-1" style={{ clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)' }} title="Control Point"></span>}
+                        {isControlPoint(station.occupied.name) && <span className="w-3 h-3 bg-yellow-400 border border-[#141414] inline-block ml-1" style={{ clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)' }} title="Control Point"></span>}
                       </span>
                       {index > 0 && (
-                        <button onClick={() => checkCoordinates(station, index)} className="bg-[#333] hover:bg-[#444] text-gray-300 px-2 py-0.5 rounded-sm flex items-center gap-1 text-[10px] transition-colors" title="Check entered coordinates against previous calculation"><CheckCircle2 className="w-3 h-3" /> Check</button>
+                        <button onClick={() => checkCoordinates(station, index)} className="bg-stone-100 hover:bg-stone-200 text-black border border-[#141414] px-1.5 py-0.5 rounded-sm flex items-center gap-1 text-[9px] transition-all font-bold cursor-pointer" title="Check entered coordinates against previous calculation"><CheckCircle2 className="w-2.5 h-2.5" /> Check</button>
                       )}
                     </div>
-                    <input type="text" value={station.occupied.name} onChange={e => updateStation(station.id, 'occupied.name', e.target.value)} className="bg-transparent border-b border-[#444] w-12 text-right focus:outline-none focus:border-yellow-500" />
+                    <input type="text" value={station.occupied.name} onChange={e => updateStation(station.id, 'occupied.name', e.target.value)} className="bg-transparent border-b-2 border-[#141414] w-12 text-right focus:outline-none focus:bg-yellow-50 font-bold" />
                   </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <div><label className="text-[10px] text-gray-500">X (m)</label><input type="number" value={station.occupied.x} onChange={e => updateStation(station.id, 'occupied.x', e.target.value)} className="w-full bg-[#111] border border-[#444] px-2 py-1 text-sm focus:outline-none focus:border-yellow-500" placeholder="0.000" /></div>
-                    <div><label className="text-[10px] text-gray-500">Y (m)</label><input type="number" value={station.occupied.y} onChange={e => updateStation(station.id, 'occupied.y', e.target.value)} className="w-full bg-[#111] border border-[#444] px-2 py-1 text-sm focus:outline-none focus:border-yellow-500" placeholder="0.000" /></div>
+                  <div className="flex gap-2 max-w-[260px]">
+                    <div className="w-1/2"><label className="text-[9px] text-gray-500 font-bold block mb-0.5">X (m)</label><input type="number" value={station.occupied.x} onChange={e => updateStation(station.id, 'occupied.x', e.target.value)} className="w-full bg-white border-2 border-[#141414] px-1.5 py-0.5 text-xs font-bold text-black focus:outline-none focus:bg-yellow-50" placeholder="0.000" /></div>
+                    <div className="w-1/2"><label className="text-[9px] text-gray-500 font-bold block mb-0.5">Y (m)</label><input type="number" value={station.occupied.y} onChange={e => updateStation(station.id, 'occupied.y', e.target.value)} className="w-full bg-white border-2 border-[#141414] px-1.5 py-0.5 text-xs font-bold text-black focus:outline-none focus:bg-yellow-50" placeholder="0.000" /></div>
                   </div>
                 </div>
-                <div className="pt-4 border-t border-[#333]">
-                  <h3 className="text-[10px] uppercase text-gray-500 mb-2">Instrument Errors</h3>
-                  <div className="grid grid-cols-2 gap-2">
-                    <div><label className="text-[10px] text-gray-500">m_s (mm)</label><input type="number" value={station.ms} onChange={e => updateStation(station.id, 'ms', e.target.value)} className="w-full bg-[#111] border border-[#444] px-2 py-1 text-sm focus:outline-none focus:border-yellow-500" /></div>
-                    <div><label className="text-[10px] text-gray-500">m_beta (")</label><input type="number" value={station.mBeta} onChange={e => updateStation(station.id, 'mBeta', e.target.value)} className="w-full bg-[#111] border border-[#444] px-2 py-1 text-sm focus:outline-none focus:border-yellow-500" /></div>
+                <div className="pt-4 border-t-2 border-[#141414] max-w-[260px]">
+                  <h3 className="text-[10px] uppercase text-black font-bold mb-2">Instrument Errors</h3>
+                  <div className="flex gap-2">
+                    <div className="w-1/2"><label className="text-[9px] text-gray-500 font-bold block mb-0.5">m_s (mm)</label><input type="number" value={station.ms} onChange={e => updateStation(station.id, 'ms', e.target.value)} className="w-full bg-white border-2 border-[#141414] px-1.5 py-0.5 text-xs font-bold text-black focus:outline-none focus:bg-yellow-50" /></div>
+                    <div className="w-1/2"><label className="text-[9px] text-gray-500 font-bold block mb-0.5">m_beta (")</label><input type="number" value={station.mBeta} onChange={e => updateStation(station.id, 'mBeta', e.target.value)} className="w-full bg-white border-2 border-[#141414] px-1.5 py-0.5 text-xs font-bold text-black focus:outline-none focus:bg-yellow-50" /></div>
                   </div>
                 </div>
               </div>
 
-              <div className="lg:col-span-8">
+              <div className="xl:col-span-8">
                 <div className="flex justify-between items-center mb-3">
-                  <h3 className="text-xs uppercase text-gray-400 font-bold tracking-wider">Foresight Measurements</h3>
-                  <button onClick={() => addForesight(station.id)} className="text-xs flex items-center gap-1 bg-[#333] hover:bg-[#444] px-2 py-1 rounded-sm transition-colors text-gray-300"><Plus className="w-3 h-3" /> Add Point</button>
+                  <h3 className="text-xs uppercase text-black font-bold tracking-wider">Foresight Measurements</h3>
+                  <button onClick={() => addForesight(station.id)} className="text-xs flex items-center gap-1 bg-stone-100 border-2 border-[#141414] hover:bg-stone-200 px-2 py-1 rounded-sm transition-all text-black font-bold shadow-[2px_2px_0px_0px_rgba(20,20,20,1)] cursor-pointer"><Plus className="w-3 h-3" /> Add Point</button>
                 </div>
                 <div className="space-y-3">
                   {station.foresights.map((fs, idx) => {
                     const isErrorHigh = fs.errorM && parseFloat(fs.errorM) > parseFloat(tolerance || '9999');
                     return (
-                      <div key={fs.id} className="bg-[#1a1a1a] border border-[#333] p-3 relative group">
-                        <div className="flex flex-wrap gap-4 items-end">
-                          <div className="w-16"><label className="text-[10px] text-gray-500 block mb-1">Point</label><input type="text" value={fs.name} onChange={e => updateForesight(station.id, fs.id, 'name', e.target.value)} className="w-full bg-[#111] border border-[#444] px-2 py-1 text-sm text-center font-bold text-yellow-500 focus:outline-none focus:border-yellow-500" /></div>
-                          <div className="w-24"><label className="text-[10px] text-gray-500 block mb-1">Dist S (m)</label><input type="number" value={fs.distance} onChange={e => updateForesight(station.id, fs.id, 'distance', e.target.value)} className="w-full bg-[#111] border border-[#444] px-2 py-1 text-sm focus:outline-none focus:border-yellow-500" placeholder="0.000" /></div>
-                          <div className="flex-1 min-w-[200px]"><label className="text-[10px] text-gray-500 block mb-1">Angle Beta (D M S)</label><div className="flex gap-1"><input type="number" value={fs.angleD} onChange={e => updateForesight(station.id, fs.id, 'angleD', e.target.value)} className="w-1/3 bg-[#111] border border-[#444] px-2 py-1 text-sm text-right focus:outline-none focus:border-yellow-500" placeholder="Deg" /><input type="number" value={fs.angleM} onChange={e => updateForesight(station.id, fs.id, 'angleM', e.target.value)} className="w-1/3 bg-[#111] border border-[#444] px-2 py-1 text-sm text-right focus:outline-none focus:border-yellow-500" placeholder="Min" /><input type="number" value={fs.angleS} onChange={e => updateForesight(station.id, fs.id, 'angleS', e.target.value)} className="w-1/3 bg-[#111] border border-[#444] px-2 py-1 text-sm text-right focus:outline-none focus:border-yellow-500" placeholder="Sec" /></div></div>
-                          <div className="w-24"><label className="text-[10px] text-gray-500 block mb-1" title="Format: DDD.MMSS">Inst. Input</label><input type="text" placeholder="125.0512" onBlur={(e) => {
-                            const val = e.target.value;
-                            if (!val) return;
-                            const parts = val.split('.');
-                            if (parts.length === 2) {
-                              const d = parts[0];
-                              const m = parts[1].substring(0, 2).padEnd(2, '0');
-                              const s = parts[1].substring(2, 4).padEnd(2, '0');
-                              updateForesight(station.id, fs.id, 'angleD', d);
-                              updateForesight(station.id, fs.id, 'angleM', m);
-                              updateForesight(station.id, fs.id, 'angleS', s);
-                              e.target.value = '';
-                            }
-                          }} className="w-full bg-[#111] border border-[#444] px-2 py-1 text-sm focus:outline-none focus:border-yellow-500" /></div>
-                          <div className="w-24"><label className="text-[10px] text-gray-500 block mb-1">Turn</label><select value={fs.turnType} onChange={e => updateForesight(station.id, fs.id, 'turnType', e.target.value)} className="w-full bg-[#111] border border-[#444] px-2 py-1 text-sm focus:outline-none focus:border-yellow-500 text-gray-300"><option value="right">Right (+)</option><option value="left">Left (-)</option></select></div>
-                          {station.foresights.length > 1 && <button onClick={() => removeForesight(station.id, fs.id)} className="text-gray-600 hover:text-red-400 p-1"><Trash2 className="w-4 h-4" /></button>}
+                      <div key={fs.id} className="bg-stone-50 border-2 border-[#141414] p-3 relative group shadow-[2px_2px_0px_0px_rgba(20,20,20,1)]">
+                        <div className="flex flex-wrap gap-3 items-end">
+                          <div className="w-[80px]">
+                            <label className="text-[10px] text-black font-bold block mb-1">Point</label>
+                            <input type="text" value={fs.name} onChange={e => updateForesight(station.id, fs.id, 'name', e.target.value)} className="w-full bg-white border-2 border-[#141414] px-1.5 py-0.5 text-xs text-center font-bold text-yellow-600 focus:outline-none focus:bg-yellow-50" />
+                          </div>
+                          <div className="w-[110px]">
+                            <label className="text-[10px] text-black font-bold block mb-1">Dist S (m)</label>
+                            <input type="number" value={fs.distance} onChange={e => updateForesight(station.id, fs.id, 'distance', e.target.value)} className="w-full bg-white border-2 border-[#141414] px-1.5 py-0.5 text-xs font-bold focus:outline-none focus:bg-yellow-50" placeholder="0.000" />
+                          </div>
+                          <div className="w-[180px]">
+                            <label className="text-[10px] text-black font-bold block mb-1">Angle Beta (D M S)</label>
+                            <div className="grid grid-cols-3 gap-0.5">
+                              <input type="number" value={fs.angleD} onChange={e => updateForesight(station.id, fs.id, 'angleD', e.target.value)} className="min-w-0 w-full bg-white border-2 border-[#141414] px-1 py-0.5 text-xs font-bold text-right focus:outline-none focus:bg-yellow-50" placeholder="Deg" />
+                              <input type="number" value={fs.angleM} onChange={e => updateForesight(station.id, fs.id, 'angleM', e.target.value)} className="min-w-0 w-full bg-white border-2 border-[#141414] px-1 py-0.5 text-xs font-bold text-right focus:outline-none focus:bg-yellow-50" placeholder="Min" />
+                              <input type="number" value={fs.angleS} onChange={e => updateForesight(station.id, fs.id, 'angleS', e.target.value)} className="min-w-0 w-full bg-white border-2 border-[#141414] px-1 py-0.5 text-xs font-bold text-right focus:outline-none focus:bg-yellow-50" placeholder="Sec" />
+                            </div>
+                          </div>
+                          <div className="w-[110px]">
+                            <label className="text-[10px] text-black font-bold block mb-1" title="Quick parse format: DDD.MMSS (e.g. 125.0512 is 125°05'12&quot;)">Quick Input</label>
+                            <input type="text" placeholder="125.0512" onBlur={(e) => {
+                              const val = e.target.value;
+                              if (!val) return;
+                              const parts = val.split('.');
+                              if (parts.length === 2) {
+                                const d = parts[0];
+                                const m = parts[1].substring(0, 2).padEnd(2, '0');
+                                const s = parts[1].substring(2, 4).padEnd(2, '0');
+                                updateForesight(station.id, fs.id, 'angleD', d);
+                                updateForesight(station.id, fs.id, 'angleM', m);
+                                updateForesight(station.id, fs.id, 'angleS', s);
+                                e.target.value = '';
+                              }
+                            }} className="w-full bg-white border-2 border-[#141414] px-1.5 py-0.5 text-xs font-bold focus:outline-none focus:bg-yellow-50" />
+                          </div>
+                          <div className="w-[140px] flex gap-1.5 items-end">
+                            <div className="flex-1">
+                              <label className="text-[10px] text-black font-bold block mb-1">Turn</label>
+                              <select value={fs.turnType} onChange={e => updateForesight(station.id, fs.id, 'turnType', e.target.value)} className="w-full bg-white border-2 border-[#141414] px-1.5 py-0.5 text-xs font-bold focus:outline-none focus:bg-yellow-50 text-black">
+                                <option value="right">Right (+)</option>
+                                <option value="left">Left (-)</option>
+                              </select>
+                            </div>
+                            {station.foresights.length > 1 && (
+                              <button onClick={() => removeForesight(station.id, fs.id)} className="text-gray-600 hover:text-red-600 p-1 border-2 border-[#141414] hover:bg-red-50 rounded-sm cursor-pointer mb-[1px]">
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            )}
+                          </div>
                         </div>
                         {fs.calcX && fs.calcY && (
-                          <div className="mt-3 pt-3 border-t border-[#333] flex flex-wrap items-center justify-between gap-4 bg-[#111] p-2 rounded-sm">
+                          <div className="mt-3 pt-3 border-t-2 border-[#141414] flex flex-wrap items-center justify-between gap-4 bg-yellow-50 border-2 border-[#141414] p-2 rounded-sm shadow-[1px_1px_0px_0px_rgba(20,20,20,1)]">
                             <div className="flex gap-6">
-                              <div><span className="text-[10px] text-gray-500 mr-2">X:</span><span className="text-green-400 font-bold">{fs.calcX}</span></div>
-                              <div><span className="text-[10px] text-gray-500 mr-2">Y:</span><span className="text-green-400 font-bold">{fs.calcY}</span></div>
-                              <div className="flex items-center gap-1"><span className="text-[10px] text-gray-500 mr-1">M:</span><span className={`font-bold ${isErrorHigh ? 'text-red-500' : 'text-blue-400'}`}>{fs.errorM} mm</span>{isErrorHigh && <AlertTriangle className="w-3 h-3 text-red-500" />}</div>
+                              <div><span className="text-[10px] text-black font-bold mr-2">X:</span><span className="text-green-700 font-bold font-mono">{fs.calcX}</span></div>
+                              <div><span className="text-[10px] text-black font-bold mr-2">Y:</span><span className="text-green-700 font-bold font-mono">{fs.calcY}</span></div>
+                              <div className="flex items-center gap-1"><span className="text-[10px] text-black font-bold mr-1">M:</span><span className={`font-bold font-mono ${isErrorHigh ? 'text-red-600' : 'text-blue-600'}`}>{fs.errorM} mm</span>{isErrorHigh && <AlertTriangle className="w-3 h-3 text-red-600 animate-pulse" />}</div>
                             </div>
                             <div className="flex gap-2">
-                              <button onClick={() => saveToProject(station, fs)} className="text-[10px] uppercase tracking-wider flex items-center gap-1 bg-[#333] text-gray-300 px-2 py-1 hover:bg-[#444] transition-colors"><Save className="w-3 h-3" /> Save to Map</button>
-                              <button onClick={() => createNextStation(station, fs)} className="text-[10px] uppercase tracking-wider flex items-center gap-1 bg-yellow-500 text-black px-2 py-1 hover:bg-yellow-400 transition-colors">Set as STN <ArrowRight className="w-3 h-3" /></button>
+                              <button onClick={() => saveToProject(station, fs)} className="text-[10px] uppercase tracking-wider flex items-center gap-1 bg-white text-black border-2 border-[#141414] px-2 py-1 hover:bg-stone-50 transition-all font-bold shadow-[1px_1px_0px_0px_rgba(20,20,20,1)] cursor-pointer"><Save className="w-3 h-3" /> Save to Map</button>
+                              <button onClick={() => createNextStation(station, fs)} className="text-[10px] uppercase tracking-wider flex items-center gap-1 bg-yellow-400 border-2 border-[#141414] text-black px-2 py-1 hover:bg-yellow-500 transition-all font-bold shadow-[1px_1px_0px_0px_rgba(20,20,20,1)] cursor-pointer">Set as STN <ArrowRight className="w-3 h-3" /></button>
                             </div>
                           </div>
                         )}

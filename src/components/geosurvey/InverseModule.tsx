@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { Compass, ArrowRight, Save } from 'lucide-react';
 import Decimal from 'decimal.js';
 import { useProject } from './ProjectContext';
@@ -116,51 +116,51 @@ export default function InverseModule() {
   const results = calculateInverse();
 
   return (
-    <div className="space-y-6 text-gray-300">
+    <div className="space-y-6 text-black bg-white">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-[#222] border border-[#333] p-4 rounded-sm">
-          <h3 className="text-xs uppercase text-yellow-500 font-bold tracking-wider mb-4 border-b border-[#333] pb-2">Point 1 (From)</h3>
+        <div className="bg-white border-2 border-[#141414] p-4 rounded-sm shadow-[4px_4px_0px_0px_rgba(20,20,20,1)]">
+          <h3 className="text-xs uppercase text-black font-bold tracking-wider mb-4 border-b-2 border-[#141414] pb-2">Point 1 (From)</h3>
           <div className="space-y-3">
-            <div>
-              <label className="text-[10px] text-gray-500 block mb-1">Name</label>
-              <input type="text" value={pointA.name} onChange={e => setPointA({...pointA, name: e.target.value})} className="w-full bg-[#111] border border-[#444] px-2 py-1 text-sm focus:outline-none focus:border-yellow-500" />
+            <div className="max-w-[100px]">
+              <label className="text-[10px] text-gray-700 font-bold block mb-1">Name</label>
+              <input type="text" value={pointA.name} onChange={e => setPointA({...pointA, name: e.target.value})} className="w-full bg-white border-2 border-[#141414] px-1.5 py-0.5 text-xs font-bold focus:outline-none focus:bg-yellow-50 text-center" />
             </div>
-            <div className="grid grid-cols-3 gap-2">
-              <div>
-                <label className="text-[10px] text-gray-500 block mb-1">X (Easting)</label>
-                <input type="number" value={pointA.x} onChange={e => setPointA({...pointA, x: e.target.value})} className="w-full bg-[#111] border border-[#444] px-2 py-1 text-sm focus:outline-none focus:border-yellow-500" />
+            <div className="flex gap-2 max-w-[340px]">
+              <div className="w-1/3">
+                <label className="text-[10px] text-gray-700 font-bold block mb-1">X (Easting)</label>
+                <input type="number" value={pointA.x} onChange={e => setPointA({...pointA, x: e.target.value})} className="w-full bg-white border-2 border-[#141414] px-1.5 py-0.5 text-xs font-bold focus:outline-none focus:bg-yellow-50 font-mono" />
               </div>
-              <div>
-                <label className="text-[10px] text-gray-500 block mb-1">Y (Northing)</label>
-                <input type="number" value={pointA.y} onChange={e => setPointA({...pointA, y: e.target.value})} className="w-full bg-[#111] border border-[#444] px-2 py-1 text-sm focus:outline-none focus:border-yellow-500" />
+              <div className="w-1/3">
+                <label className="text-[10px] text-gray-700 font-bold block mb-1">Y (Northing)</label>
+                <input type="number" value={pointA.y} onChange={e => setPointA({...pointA, y: e.target.value})} className="w-full bg-white border-2 border-[#141414] px-1.5 py-0.5 text-xs font-bold focus:outline-none focus:bg-yellow-50 font-mono" />
               </div>
-              <div>
-                <label className="text-[10px] text-gray-500 block mb-1">Z (Elev) - Opt</label>
-                <input type="number" value={pointA.z} onChange={e => setPointA({...pointA, z: e.target.value})} className="w-full bg-[#111] border border-[#444] px-2 py-1 text-sm focus:outline-none focus:border-yellow-500" />
+              <div className="w-1/3">
+                <label className="text-[10px] text-gray-700 font-bold block mb-1">Z (Elev) - Opt</label>
+                <input type="number" value={pointA.z} onChange={e => setPointA({...pointA, z: e.target.value})} className="w-full bg-white border-2 border-[#141414] px-1.5 py-0.5 text-xs font-bold focus:outline-none focus:bg-yellow-50 font-mono" />
               </div>
             </div>
           </div>
         </div>
 
-        <div className="bg-[#222] border border-[#333] p-4 rounded-sm">
-          <h3 className="text-xs uppercase text-yellow-500 font-bold tracking-wider mb-4 border-b border-[#333] pb-2">Point 2 (To)</h3>
+        <div className="bg-white border-2 border-[#141414] p-4 rounded-sm shadow-[4px_4px_0px_0px_rgba(20,20,20,1)]">
+          <h3 className="text-xs uppercase text-black font-bold tracking-wider mb-4 border-b-2 border-[#141414] pb-2">Point 2 (To)</h3>
           <div className="space-y-3">
-            <div>
-              <label className="text-[10px] text-gray-500 block mb-1">Name</label>
-              <input type="text" value={pointB.name} onChange={e => setPointB({...pointB, name: e.target.value})} className="w-full bg-[#111] border border-[#444] px-2 py-1 text-sm focus:outline-none focus:border-yellow-500" />
+            <div className="max-w-[100px]">
+              <label className="text-[10px] text-gray-700 font-bold block mb-1">Name</label>
+              <input type="text" value={pointB.name} onChange={e => setPointB({...pointB, name: e.target.value})} className="w-full bg-white border-2 border-[#141414] px-1.5 py-0.5 text-xs font-bold focus:outline-none focus:bg-yellow-50 text-center" />
             </div>
-            <div className="grid grid-cols-3 gap-2">
-              <div>
-                <label className="text-[10px] text-gray-500 block mb-1">X (Easting)</label>
-                <input type="number" value={pointB.x} onChange={e => setPointB({...pointB, x: e.target.value})} className="w-full bg-[#111] border border-[#444] px-2 py-1 text-sm focus:outline-none focus:border-yellow-500" />
+            <div className="flex gap-2 max-w-[340px]">
+              <div className="w-1/3">
+                <label className="text-[10px] text-gray-700 font-bold block mb-1">X (Easting)</label>
+                <input type="number" value={pointB.x} onChange={e => setPointB({...pointB, x: e.target.value})} className="w-full bg-white border-2 border-[#141414] px-1.5 py-0.5 text-xs font-bold focus:outline-none focus:bg-yellow-50 font-mono" />
               </div>
-              <div>
-                <label className="text-[10px] text-gray-500 block mb-1">Y (Northing)</label>
-                <input type="number" value={pointB.y} onChange={e => setPointB({...pointB, y: e.target.value})} className="w-full bg-[#111] border border-[#444] px-2 py-1 text-sm focus:outline-none focus:border-yellow-500" />
+              <div className="w-1/3">
+                <label className="text-[10px] text-gray-700 font-bold block mb-1">Y (Northing)</label>
+                <input type="number" value={pointB.y} onChange={e => setPointB({...pointB, y: e.target.value})} className="w-full bg-white border-2 border-[#141414] px-1.5 py-0.5 text-xs font-bold focus:outline-none focus:bg-yellow-50 font-mono" />
               </div>
-              <div>
-                <label className="text-[10px] text-gray-500 block mb-1">Z (Elev) - Opt</label>
-                <input type="number" value={pointB.z} onChange={e => setPointB({...pointB, z: e.target.value})} className="w-full bg-[#111] border border-[#444] px-2 py-1 text-sm focus:outline-none focus:border-yellow-500" />
+              <div className="w-1/3">
+                <label className="text-[10px] text-gray-700 font-bold block mb-1">Z (Elev) - Opt</label>
+                <input type="number" value={pointB.z} onChange={e => setPointB({...pointB, z: e.target.value})} className="w-full bg-white border-2 border-[#141414] px-1.5 py-0.5 text-xs font-bold focus:outline-none focus:bg-yellow-50 font-mono" />
               </div>
             </div>
           </div>
@@ -168,40 +168,40 @@ export default function InverseModule() {
       </div>
 
       {results && (
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-[#1a1a1a] border border-[#333] p-6 rounded-sm">
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-white border-2 border-[#141414] p-6 rounded-sm shadow-[6px_6px_0px_0px_rgba(20,20,20,1)]">
           <div className="flex justify-between items-center mb-6">
-            <h3 className="text-sm uppercase text-white font-bold tracking-wider flex items-center gap-2">
-              <Compass className="w-5 h-5 text-yellow-500" /> Inverse Results: {pointA.name} <ArrowRight className="w-4 h-4" /> {pointB.name}
+            <h3 className="text-sm uppercase text-black font-bold tracking-wider flex items-center gap-2">
+              <Compass className="w-5 h-5 text-yellow-600" /> Inverse Results: {pointA.name} <ArrowRight className="w-4 h-4" /> {pointB.name}
             </h3>
-            <button onClick={savePoints} className="flex items-center gap-2 bg-[#333] text-gray-300 px-3 py-1 text-xs uppercase tracking-wider hover:bg-[#444] transition-colors rounded-sm">
+            <button onClick={savePoints} className="flex items-center gap-2 bg-yellow-400 text-black border-2 border-[#141414] px-3 py-1.5 text-xs font-bold uppercase tracking-wider hover:bg-yellow-500 shadow-[2px_2px_0px_0px_rgba(20,20,20,1)] transition-all rounded-sm cursor-pointer">
               <Save className="w-4 h-4" /> Save Points to Map
             </button>
           </div>
           
           <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-            <div className="bg-[#111] p-4 border border-[#222]">
-              <div className="text-[10px] text-gray-500 uppercase tracking-wider mb-1">Horizontal Dist</div>
-              <div className="text-xl font-mono text-green-400">{results.hd} <span className="text-xs text-gray-600">m</span></div>
+            <div className="bg-stone-50 p-4 border-2 border-[#141414] shadow-[2px_2px_0px_0px_rgba(20,20,20,1)]">
+              <div className="text-[10px] text-gray-700 font-bold uppercase tracking-wider mb-1">Horizontal Dist</div>
+              <div className="text-xl font-mono font-bold text-green-700">{results.hd} <span className="text-xs text-gray-700">m</span></div>
             </div>
-            <div className="bg-[#111] p-4 border border-[#222]">
-              <div className="text-[10px] text-gray-500 uppercase tracking-wider mb-1">Azimuth</div>
-              <div className="text-xl font-mono text-blue-400">{results.azimuth}</div>
+            <div className="bg-stone-50 p-4 border-2 border-[#141414] shadow-[2px_2px_0px_0px_rgba(20,20,20,1)]">
+              <div className="text-[10px] text-gray-700 font-bold uppercase tracking-wider mb-1">Azimuth</div>
+              <div className="text-xl font-mono font-bold text-blue-700">{results.azimuth}</div>
             </div>
-            <div className="bg-[#111] p-4 border border-[#222]">
-              <div className="text-[10px] text-gray-500 uppercase tracking-wider mb-1">Quadrant Bearing</div>
-              <div className="text-xl font-mono text-purple-400">{results.bearing}</div>
+            <div className="bg-stone-50 p-4 border-2 border-[#141414] shadow-[2px_2px_0px_0px_rgba(20,20,20,1)]">
+              <div className="text-[10px] text-gray-700 font-bold uppercase tracking-wider mb-1">Quadrant Bearing</div>
+              <div className="text-xl font-mono font-bold text-purple-700">{results.bearing}</div>
             </div>
-            <div className="bg-[#111] p-4 border border-[#222]">
-              <div className="text-[10px] text-gray-500 uppercase tracking-wider mb-1">Slope Distance</div>
-              <div className="text-xl font-mono text-gray-300">{results.sd} <span className="text-xs text-gray-600">m</span></div>
+            <div className="bg-stone-50 p-4 border-2 border-[#141414] shadow-[2px_2px_0px_0px_rgba(20,20,20,1)]">
+              <div className="text-[10px] text-gray-700 font-bold uppercase tracking-wider mb-1">Slope Distance</div>
+              <div className="text-xl font-mono font-bold text-black">{results.sd} <span className="text-xs text-gray-700">m</span></div>
             </div>
-            <div className="bg-[#111] p-4 border border-[#222]">
-              <div className="text-[10px] text-gray-500 uppercase tracking-wider mb-1">Height Diff (ΔZ)</div>
-              <div className="text-xl font-mono text-gray-300">{results.dz} <span className="text-xs text-gray-600">m</span></div>
+            <div className="bg-stone-50 p-4 border-2 border-[#141414] shadow-[2px_2px_0px_0px_rgba(20,20,20,1)]">
+              <div className="text-[10px] text-gray-700 font-bold uppercase tracking-wider mb-1">Height Diff (ΔZ)</div>
+              <div className="text-xl font-mono font-bold text-black">{results.dz} <span className="text-xs text-gray-700">m</span></div>
             </div>
-            <div className="bg-[#111] p-4 border border-[#222]">
-              <div className="text-[10px] text-gray-500 uppercase tracking-wider mb-1">Grade</div>
-              <div className="text-xl font-mono text-gray-300">{results.grade}</div>
+            <div className="bg-stone-50 p-4 border-2 border-[#141414] shadow-[2px_2px_0px_0px_rgba(20,20,20,1)]">
+              <div className="text-[10px] text-gray-700 font-bold uppercase tracking-wider mb-1">Grade</div>
+              <div className="text-xl font-mono font-bold text-black">{results.grade}</div>
             </div>
           </div>
         </motion.div>
