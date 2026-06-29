@@ -5,6 +5,13 @@ import { PrimesManager } from './src/server/primesManager.ts';
 import { GeometryService } from './src/server/geometryService.ts';
 import { factorize } from './src/lib/mathUtils.ts';
 import { sympyService } from './src/server/sympyService.ts';
+import { 
+  solveAdvancedMathOnServer, 
+  solveComplexOptimizationOnServer, 
+  analyzePolynomialOnServer,
+  checkAndIncrementRateLimit,
+  getRateLimitStatus
+} from './src/server/geminiService.ts';
 
 async function startServer() {
   const app = express();
@@ -150,6 +157,63 @@ async function startServer() {
     const { r } = req.body;
     const volume = GeometryService.formatPiVolume(r);
     res.json({ volume });
+  });
+
+  // Gemini API Endpoints with daily rate limits
+  app.get('/api/math/gemini/limit-status', (req, res) => {
+    const ip = (req.headers['x-forwarded-for'] as string || req.socket.remoteAddress || '127.0.0.1').split(',')[0].trim();
+    res.json(getRateLimitStatus(ip));
+  });
+
+  app.post('/api/math/gemini/solve', async (req, res) => {
+    const ip = (req.headers['x-forwarded-for'] as string || req.socket.remoteAddress || '127.0.0.1').split(',')[0].trim();
+    const rateCheck = checkAndIncrementRateLimit(ip);
+    if (!rateCheck.allowed) {
+      return res.status(429).json({ error: rateCheck.message });
+    }
+
+    try {
+      const { prompt, mode, userFunctions, angleMode } = req.body;
+      const result = await solveAdvancedMathOnServer(prompt, mode, userFunctions, angleMode);
+      res.json(result);
+    } catch (e: any) {
+      console.error("[Server Gemini API Error]:", e);
+      res.status(500).json({ error: e.message || "Failed to process Gemini request." });
+    }
+  });
+
+  app.post('/api/math/gemini/optimize', async (req, res) => {
+    const ip = (req.headers['x-forwarded-for'] as string || req.socket.remoteAddress || '127.0.0.1').split(',')[0].trim();
+    const rateCheck = checkAndIncrementRateLimit(ip);
+    if (!rateCheck.allowed) {
+      return res.status(429).json({ error: rateCheck.message });
+    }
+
+    try {
+      const { tab, query, difficulty } = req.body;
+      const result = await solveComplexOptimizationOnServer(tab, query, difficulty);
+      res.json(result);
+    } catch (e: any) {
+      console.error("[Server Gemini API Error]:", e);
+      res.status(500).json({ error: e.message || "Failed to process Gemini request." });
+    }
+  });
+
+  app.post('/api/math/gemini/polynomial', async (req, res) => {
+    const ip = (req.headers['x-forwarded-for'] as string || req.socket.remoteAddress || '127.0.0.1').split(',')[0].trim();
+    const rateCheck = checkAndIncrementRateLimit(ip);
+    if (!rateCheck.allowed) {
+      return res.status(429).json({ error: rateCheck.message });
+    }
+
+    try {
+      const { coeffs } = req.body;
+      const result = await analyzePolynomialOnServer(coeffs);
+      res.json(result);
+    } catch (e: any) {
+      console.error("[Server Gemini API Error]:", e);
+      res.status(500).json({ error: e.message || "Failed to process Gemini request." });
+    }
   });
 
   // SymPy API Endpoints
